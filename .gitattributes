@@ -1,0 +1,19 @@
+* text=auto eol=lf
+
+# Audio
+*.wav  binary
+*.ogg  binary
+*.mp3  binary
+*.flac binary
+
+# Images
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+
+# Fonts and binary Godot resources
+*.ttf  binary
+*.otf  binary
+*.res  binary
+*.scn  binary
