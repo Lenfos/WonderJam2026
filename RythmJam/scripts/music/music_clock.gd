@@ -19,6 +19,8 @@ const USEC_PER_SEC := 1000000.0
 ## Web only: how late, in seconds, the browser actually starts the stream after play().
 ## Positive delays the clock. Tune by ear (metronome vs backing); future player latency setting.
 @export var web_start_offset_sec: float = 0.0
+## Backing track level, under the instruments. The Music bus stays free for a player volume setting.
+@export var volume_db: float = -15.0
 
 var bpm: float = 120.0
 var beats_per_loop: int = MusicTypes.STEP_COUNT
@@ -39,6 +41,7 @@ var _last_audio_time: float = 0.0
 func _ready() -> void:
 	_player = AudioStreamPlayer.new()
 	_player.bus = &"Music"
+	_player.volume_db = volume_db
 	add_child(_player)
 
 
@@ -169,9 +172,9 @@ func get_beat_time(beat: float) -> float:
 	return beat * get_beat_length()
 
 
-## Step 0..beats_per_loop-1 within the current loop (one step = one beat).
+## Sequencer step 0..STEP_COUNT-1 (one step = one beat). A loop holds a whole number of grids.
 func get_step(time: float) -> int:
-	return posmod(floori(get_beat(time)), beats_per_loop)
+	return posmod(floori(get_beat(time)), MusicTypes.STEP_COUNT)
 
 
 func get_loop_index(time: float) -> int:

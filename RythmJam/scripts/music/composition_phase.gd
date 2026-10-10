@@ -24,7 +24,7 @@ func _ready() -> void:
 func start(news: NewsData, p_duration_sec: float = -1.0) -> void:
 	_duration = p_duration_sec if p_duration_sec > 0.0 else duration_sec
 	_composition = Composition.new()
-	clock.start(news.backing_track, news.bpm)
+	clock.start(news.backing_track, news.bpm, news.backing_beats)
 	sequencer.start(clock, news, _composition)
 	_running = true
 	_seconds_left = -1

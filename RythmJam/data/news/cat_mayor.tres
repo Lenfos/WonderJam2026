@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="NewsData" format=3]
 
-[ext_resource type="AudioStream" path="res://audio/placeholder/test_loop_110.wav" id="1_jmt2p"]
+[ext_resource type="AudioStream" path="res://audio/backings/background_track_loop.wav" id="1_jmt2p"]
 [ext_resource type="Script" path="res://scripts/music/news_data.gd" id="2_v8goe"]
 
 [resource]
@@ -9,7 +9,9 @@ id = &"cat_mayor"
 headline = "Un chat élu maire de la ville"
 anchor_lines = PackedStringArray("Flash spécial : un chat vient d\'être élu maire de la ville.", "Il l\'emporte largement, loin devant ses rivaux humains.", "Sa première mesure : la sieste obligatoire pour tous.")
 bpm = 110.0
+scale = 1
 target_density = PackedFloat32Array(0.5, 0.25, 0.25, 0.25)
 backing_track = ExtResource("1_jmt2p")
+backing_beats = 64
 brass_melody = PackedInt32Array(0, 1, 2, 1, 2, 3, 4, 3, 2, 3, 4, 5, 4, 3, 1, 0)
 bells_melody = PackedInt32Array(2, 3, 4, 3, 2, 1, 0, 1, 2, 3, 4, 5, 6, 5, 4, 5)

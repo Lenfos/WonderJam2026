@@ -17,8 +17,10 @@ extends Resource
 @export var target_density: PackedFloat32Array
 @export var special_criterion: MusicTypes.SpecialCriterion = MusicTypes.SpecialCriterion.VARIETY
 
-## Loop exactly STEP_COUNT beats long at bpm.
+## Loop exactly backing_beats beats long at bpm.
 @export var backing_track: AudioStream
+## Length of backing_track in beats: a multiple of STEP_COUNT, so every grid starts on the same bar line.
+@export var backing_beats: int = MusicTypes.STEP_COUNT
 ## Scale DEGREE per step (STEP_COUNT values), played when the BRASS cell of that step is on.
 ## Degrees, not semitones, so a melody can never leave `scale` (see MusicTypes.degree_to_semitones).
 @export var brass_melody: PackedInt32Array
@@ -49,4 +51,6 @@ func validate() -> PackedStringArray:
 			errors.append("melody degree %d is more than %d semitones from the root" % [degree, MAX_MELODY_SEMITONES])
 	if backing_track == null:
 		errors.append("backing_track is missing")
+	if backing_beats <= 0 or backing_beats % MusicTypes.STEP_COUNT != 0:
+		errors.append("backing_beats must be a positive multiple of %d (got %d)" % [MusicTypes.STEP_COUNT, backing_beats])
 	return errors

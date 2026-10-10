@@ -15,9 +15,12 @@ func _init() -> void:
 		"Sa première mesure : la sieste obligatoire pour tous.",
 	])
 	news.bpm = 110.0
-	news.scale = MusicTypes.ScaleType.MAJOR_PENTATONIC
+	# Minor: the backing track is in C minor pentatonic.
+	news.scale = MusicTypes.ScaleType.MINOR_PENTATONIC
 	news.special_criterion = MusicTypes.SpecialCriterion.VARIETY
-	news.backing_track = load("res://audio/placeholder/test_loop_110.wav")
+	# AmbientLoop.wav by IgalBlech, CC0 (freesound.org/s/399164), cut with tools/make_loop.py.
+	news.backing_track = load("res://audio/backings/background_track_loop.wav")
+	news.backing_beats = 64
 	# Placeholder values, to tune with the real music. Melodies are scale degrees (5 = root an octave up).
 	news.target_density = PackedFloat32Array([0.5, 0.25, 0.25, 0.25])
 	news.brass_melody = PackedInt32Array([0, 1, 2, 1, 2, 3, 4, 3, 2, 3, 4, 5, 4, 3, 1, 0])

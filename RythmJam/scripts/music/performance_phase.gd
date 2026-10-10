@@ -61,13 +61,13 @@ var _chaos := 0.0
 func start(news: NewsData, composition: Composition, multiplier: float) -> void:
 	_news = news
 	_composition_multiplier = multiplier
-	# The chart starts on a loop boundary so its steps line up with the backing track's bars:
-	# the clock starts count_in_beats earlier, near the end of a loop.
+	# The chart starts on a grid boundary so its steps line up with the backing track's bars:
+	# the clock starts count_in_beats earlier, near the end of a grid.
 	_start_beat = ceili(count_in_beats / float(MusicTypes.STEP_COUNT)) * MusicTypes.STEP_COUNT
 	_end_beat = _start_beat + loop_count * MusicTypes.STEP_COUNT
 	var count_in_start := _start_beat - count_in_beats
-	var beat_length := news.backing_track.get_length() / MusicTypes.STEP_COUNT
-	clock.start(news.backing_track, news.bpm, MusicTypes.STEP_COUNT, count_in_start * beat_length)
+	var beat_length := news.backing_track.get_length() / news.backing_beats
+	clock.start(news.backing_track, news.bpm, news.backing_beats, count_in_start * beat_length)
 	sequencer.start(clock, news, composition, _start_beat, _end_beat)
 	_next_countdown_beat = count_in_start
 	_next_loop = 0
