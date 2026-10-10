@@ -6,10 +6,10 @@ extends Node
 
 ## Phase length when start() is not given one.
 @export var duration_sec: float = 45.0
+## Shared with the performance phase (siblings in main.tscn).
+@export var clock: MusicClock
+@export var sequencer: SequencerPlayer
 
-# ponytail: the phase owns the clock; move it to a round controller once the performance phase needs it too.
-var clock: MusicClock
-var _sequencer: SequencerPlayer
 var _composition: Composition
 var _running := false
 var _duration: float = 0.0
@@ -17,10 +17,6 @@ var _seconds_left: int = -1
 
 
 func _ready() -> void:
-	clock = MusicClock.new()
-	add_child(clock)
-	_sequencer = SequencerPlayer.new()
-	add_child(_sequencer)
 	MusicBus.cell_toggle_requested.connect(_on_cell_toggle_requested)
 
 
@@ -29,7 +25,7 @@ func start(news: NewsData, p_duration_sec: float = -1.0) -> void:
 	_duration = p_duration_sec if p_duration_sec > 0.0 else duration_sec
 	_composition = Composition.new()
 	clock.start(news.backing_track, news.bpm)
-	_sequencer.start(clock, news, _composition)
+	sequencer.start(clock, news, _composition)
 	_running = true
 	_seconds_left = -1
 	MusicBus.composition_started.emit(news, _duration)
@@ -66,7 +62,7 @@ func _update_countdown() -> void:
 # The backing track keeps playing: the next phase decides what to do with the clock.
 func _finish() -> void:
 	_running = false
-	_sequencer.stop()
+	sequencer.stop()
 	MusicBus.composition_time_changed.emit(0)
 	MusicBus.composition_finished.emit(_composition.duplicate_composition())
 
@@ -76,5 +72,5 @@ func _on_cell_toggle_requested(lane: int, step: int) -> void:
 		return
 	var active := _composition.toggle(lane, step)
 	if active:
-		_sequencer.preview_cell(lane, step)
+		sequencer.preview_cell(lane, step)
 	MusicBus.composition_changed.emit(lane, step, active)

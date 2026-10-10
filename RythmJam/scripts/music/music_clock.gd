@@ -56,7 +56,9 @@ func _notification(what: int) -> void:
 			resume()
 
 
-func start(stream: AudioStream, p_bpm: float, p_beats_per_loop: int = MusicTypes.STEP_COUNT) -> void:
+## from_sec: where playback starts in the stream, and the clock's time at start (e.g. a count-in
+## starting a few beats before the loop end). Must be less than the stream length.
+func start(stream: AudioStream, p_bpm: float, p_beats_per_loop: int = MusicTypes.STEP_COUNT, from_sec: float = 0.0) -> void:
 	bpm = p_bpm
 	beats_per_loop = p_beats_per_loop
 	_loop_length = stream.get_length()
@@ -68,15 +70,15 @@ func start(stream: AudioStream, p_bpm: float, p_beats_per_loop: int = MusicTypes
 		push_warning("MusicClock: %s is not imported with loop mode Forward" % stream.resource_path)
 	_output_latency = AudioServer.get_output_latency()
 	_loop_count = 0
-	_last_position = 0.0
-	# Web: negative during the browser start delay, like get_song_time() during output latency.
-	_last_audio_time = -web_start_offset_sec if _is_web else 0.0
+	_last_position = from_sec
+	# Web: behind from_sec during the browser start delay, like get_song_time() during output latency.
+	_last_audio_time = from_sec - web_start_offset_sec if _is_web else from_sec
 	_running = true
 	_paused = false
 	_player.stream = stream
 	_player.stream_paused = false
-	_player.play()
-	_restart_stopwatch(0.0)
+	_player.play(from_sec)
+	_restart_stopwatch(from_sec)
 
 
 func stop() -> void:

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="GameConfig" format=3]
+
+[ext_resource type="Script" path="res://scripts/music/game_config.gd" id="1_config"]
+[ext_resource type="Script" path="res://scripts/music/news_data.gd" id="2_news"]
+[ext_resource type="Resource" path="res://data/news/cat_mayor.tres" id="3_cat"]
+
+[resource]
+script = ExtResource("1_config")
+first_news = ExtResource("3_cat")
+news_pool = Array[ExtResource("2_news")]([ExtResource("3_cat")])
+round_count = 3
+round_thresholds = PackedInt32Array(1000, 2000, 3000)
+composition_duration_sec = 45.0

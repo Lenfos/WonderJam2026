@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://cqux03or8df0t"]
 
-[ext_resource type="Script" uid="uid://cn4jkw30cj7g" path="res://scenes/debug/sequencer_test.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/debug/sequencer_test.gd" id="1"]
 [ext_resource type="Script" uid="uid://fo6ecfnl1tin" path="res://scripts/music/composition_phase.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/debug/sequencer_grid.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/music/music_clock.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/music/sequencer_player.gd" id="5"]
 
-[node name="SequencerTest" type="VBoxContainer" unique_id=1556701877]
+[node name="SequencerTest" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,5 +14,20 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="CompositionPhase" type="Node" parent="." unique_id=1477406095]
+[node name="Help" type="Label" parent="."]
+layout_mode = 2
+text = "Space = start   E = finish early"
+
+[node name="SequencerGrid" parent="." instance=ExtResource("3")]
+layout_mode = 2
+
+[node name="MusicClock" type="Node" parent="."]
+script = ExtResource("4")
+
+[node name="SequencerPlayer" type="Node" parent="."]
+script = ExtResource("5")
+
+[node name="CompositionPhase" type="Node" parent="." node_paths=PackedStringArray("clock", "sequencer")]
 script = ExtResource("2")
+clock = NodePath("../MusicClock")
+sequencer = NodePath("../SequencerPlayer")

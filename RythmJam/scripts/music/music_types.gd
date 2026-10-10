@@ -20,6 +20,9 @@ enum Lane { KICK, SNARE, BRASS, BELLS }
 ## Result of one note in the rhythm phase.
 enum Judgment { PERFECT, GOOD, BAD, MISS }
 
+## Game flow phase, owned by the RoundManager (see MusicBus.phase_changed and docs/CONTRACT.md).
+enum Phase { TITLE, NEWS_INTRO, COMPOSITION, COMPOSITION_REVIEW, PERFORMANCE, RESULTS, GAME_OVER }
+
 ## Musical scale of a news item (used to build melodies).
 enum ScaleType { MAJOR_PENTATONIC, MINOR_PENTATONIC, WHOLE_TONE }
 

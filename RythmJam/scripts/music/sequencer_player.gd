@@ -24,8 +24,10 @@ const MAX_LATE_SEC := 0.05
 var _clock: MusicClock
 var _news: NewsData
 var _composition: Composition
-## Absolute beat (loops included) last handled; -1 before the first one.
+## Absolute beat (loops included) last handled; first_beat - 1 before the first one.
 var _last_beat: int = -1
+## Absolute beat at which stepping stops; -1 = loop forever.
+var _end_beat: int = -1
 ## Per lane: its players (1 for drums, MELODIC_POOL_SIZE for melodic lanes).
 var _voices: Array[Array] = []
 ## Per lane: index in _voices[lane] of the next player to use.
@@ -47,11 +49,14 @@ func _ready() -> void:
 
 
 ## `clock` must already be playing news.backing_track. `composition` is read live, not copied.
-func start(clock: MusicClock, news: NewsData, composition: Composition) -> void:
+## Only absolute clock beats in [first_beat, end_beat) are stepped (end_beat -1 = loop forever):
+## earlier ones are a count-in, the end lets the last notes ring.
+func start(clock: MusicClock, news: NewsData, composition: Composition, first_beat: int = 0, end_beat: int = -1) -> void:
 	_clock = clock
 	_news = news
 	_composition = composition
-	_last_beat = -1
+	_last_beat = first_beat - 1
+	_end_beat = end_beat
 
 
 ## Stops stepping and cuts every ringing sample.
@@ -68,6 +73,9 @@ func _process(_delta: float) -> void:
 	var time := _clock.get_audio_time()
 	var beat := floori(_clock.get_beat(time))
 	if beat <= _last_beat:
+		return
+	if _end_beat >= 0 and beat >= _end_beat:
+		_clock = null
 		return
 	# Steps skipped by a hitch are dropped: only the latest one is considered.
 	_last_beat = beat

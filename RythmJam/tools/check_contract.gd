@@ -41,6 +41,34 @@ func _init() -> void:
 	far.brass_melody[0] = 11  # major pentatonic degree 11 = 26 semitones
 	assert("melody degree 11 is more than 24 semitones from the root" in far.validate())
 
+	# comp: SNARE on step 4, BELLS on the last step. 2 loops from beat 16, 0.5 s per beat.
+	var chart := NoteData.build_chart(comp, 0.5, 16, 2)
+	assert(chart.size() == 4)
+	for i in chart.size():
+		assert(chart[i].index == i, "index = position in the chart")
+	assert(chart[0].lane == MusicTypes.Lane.SNARE and is_equal_approx(chart[0].time_sec, 10.0))
+	assert(chart[1].lane == MusicTypes.Lane.BELLS and is_equal_approx(chart[1].time_sec, 15.5))
+	assert(is_equal_approx(chart[2].time_sec, 18.0), "second loop starts STEP_COUNT beats later")
+	var both := Composition.new()
+	both.set_cell(MusicTypes.Lane.BELLS, 0, true)
+	both.set_cell(MusicTypes.Lane.KICK, 0, true)
+	var same_step := NoteData.build_chart(both, 0.5, 0, 1)
+	assert(same_step[0].lane == MusicTypes.Lane.KICK and same_step[1].lane == MusicTypes.Lane.BELLS, "same time: lane order")
+
+	var evaluation := CompositionEvaluator.evaluate(comp, news)
+	assert(evaluation.has("quality") and evaluation.has("multiplier") and evaluation["comments"] is PackedStringArray)
+
+	var config: GameConfig = load("res://data/game_config.tres")
+	assert(config.first_news == news and config.round_thresholds.size() == config.round_count)
+	assert(config.get_threshold(99) == config.round_thresholds[-1], "rounds past the array reuse the last threshold")
+	var rounds := config.draw_rounds()  # pool too small: warns and repeats
+	assert(rounds.size() == config.round_count and rounds[0] == news)
+	var other_a := NewsData.new()
+	var other_b := NewsData.new()
+	config.news_pool = [news, other_a, other_b]
+	rounds = config.draw_rounds()
+	assert(rounds[0] == news and other_a in rounds and other_b in rounds, "no repeats, first_news only first")
+
 	var lane_keys: Array[Key] = [KEY_D, KEY_F, KEY_J, KEY_K]
 	for lane in MusicTypes.LANE_COUNT:
 		var key := InputMap.action_get_events(MusicTypes.lane_action(lane))[0] as InputEventKey
