@@ -6,7 +6,9 @@ extends Node
 
 ## Voices per melodic lane. pitch_scale is per player (it retunes every voice still ringing),
 ## so each melodic note takes the next player of a round-robin pool instead.
-const MELODIC_POOL_SIZE := 4
+# ponytail: a player is retuned MELODIC_POOL_SIZE steps after its last note: ~4.4 s at 110 BPM,
+# when the 7 s glock tail is ~34 dB down. Raise it for very fast news or longer samples.
+const MELODIC_POOL_SIZE := 8
 ## Simultaneous voices per player (kick/snare tails overlapping the next hit).
 const MAX_POLYPHONY := 4
 ## A step reached later than this (frame hitch) is shown but not played: a late note sounds wrong.
@@ -14,10 +16,10 @@ const MAX_LATE_SEC := 0.05
 
 ## One-shot per lane, indexed by MusicTypes.Lane. Melodic samples must be tuned to MusicTypes.REFERENCE_NOTE.
 @export var lane_streams: Array[AudioStream] = [
-	preload("res://audio/placeholder/inst_kick.wav"),
-	preload("res://audio/placeholder/inst_snare.wav"),
-	preload("res://audio/placeholder/inst_brass.wav"),
-	preload("res://audio/placeholder/inst_bells.wav"),
+	preload("res://audio/instruments/kick.wav"),
+	preload("res://audio/instruments/snare.wav"),
+	preload("res://audio/instruments/trumpet_C5.wav"),
+	preload("res://audio/instruments/glock_C5.wav"),
 ]
 @export var bus: StringName = &"Instruments"
 
