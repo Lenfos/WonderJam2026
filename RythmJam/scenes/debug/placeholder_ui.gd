@@ -65,8 +65,8 @@ func _on_phase_changed(phase: MusicTypes.Phase) -> void:
 			_info_label.text = "Compose ! Clique les cases, puis J'ai fini"
 
 
-func _on_game_started(news: NewsData, threshold: int) -> void:
-	_news_label.text = "%s   (objectif : %d téléspectateurs)" % [news.headline, threshold]
+func _on_game_started(news: NewsData) -> void:
+	_news_label.text = news.headline
 	_audimat_label.text = "Audimat : %d" % MusicBus.get_audimat()
 	_info_label.text = "FLASH SPÉCIAL : %s" % news.headline
 
@@ -87,13 +87,8 @@ func _on_anchor_line_changed(line_index: int) -> void:
 	_info_label.text = "Présentateur : « %s »" % MusicBus.get_current_news().anchor_lines[line_index]
 
 
-func _on_game_finished(won: bool, audimat: int) -> void:
-	_info_label.text = "%s\n%s\n%d / %d téléspectateurs" % [
-		"GAGNÉ !" if won else "PERDU...",
-		MusicBus.get_current_news().headline,
-		audimat,
-		MusicBus.get_threshold(),
-	]
+func _on_game_finished(audimat: int) -> void:
+	_info_label.text = "FIN DE L'ÉMISSION\n%s\n%d téléspectateurs" % [MusicBus.get_current_news().headline, audimat]
 
 
 func _add_button(bar: HBoxContainer, phase: MusicTypes.Phase, text: String, request: Signal) -> void:

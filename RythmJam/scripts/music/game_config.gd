@@ -1,12 +1,10 @@
 class_name GameConfig
 extends Resource
-## Game flow settings: which news a game can play and the audimat needed to win.
+## Game flow settings: which news a game can play and how long the composition lasts.
 ## Instance used by the GameManager: res://data/game_config.tres.
 
 ## Each game plays one news drawn from it (see draw_news).
 @export var news_pool: Array[NewsData] = []
-## Minimum audimat to win. Placeholder value.
-@export var threshold: int = 2000
 @export var composition_duration_sec: float = 45.0
 
 

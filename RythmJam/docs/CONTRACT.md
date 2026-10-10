@@ -62,7 +62,7 @@ Pas besoin de déconnecter les signaux : Godot coupe les connexions quand ton n�
 
 ## 3. Le déroulement d'une partie
 
-Une partie = une news, tirée au hasard (jamais deux fois de suite la même quand il y en a plusieurs). Le joueur gagne si l'audimat de la performance atteint l'objectif.
+Une partie = une news, tirée au hasard (jamais deux fois de suite la même quand il y en a plusieurs). On ne peut pas perdre : la partie va toujours jusqu'au bout, et l'audimat final est le score, bon ou mauvais.
 
 ```
 TITLE
@@ -99,16 +99,15 @@ TITLE
 
 - **À l'écran** : le titre du jeu, un bouton « Jouer ».
 - **Musique** : rien ne joue.
-- **À écouter** : rien de spécifique. Après « Rejouer », tout est remis à zéro : `get_current_news()` = `null`, `get_audimat()` = 0. `get_threshold()` garde l'objectif : il ne change pas d'une partie à l'autre.
-- **À émettre** : `start_game_requested()` au clic sur « Jouer ».
+- **À écouter** : rien de spécifique. Après « Rejouer », tout est remis à zéro : `get_current_news()` = `null`, `get_audimat()` = 0.- **À émettre** : `start_game_requested()` au clic sur « Jouer ».
 - **Sortie** : → `NEWS_INTRO`.
 
 ### `NEWS_INTRO` : le flash info
 
-- **À l'écran** : « FLASH SPÉCIAL », le titre de la news, l'objectif d'audimat. Optionnel : la consigne bonus (`news.special_criterion`, voir §5).
+- **À l'écran** : « FLASH SPÉCIAL », le titre de la news. Optionnel : la consigne bonus (`news.special_criterion`, voir §5).
 - **Musique** : rien ne joue.
 - **À écouter** :
-  - `game_started(news: NewsData, threshold: int)`, juste après `phase_changed(NEWS_INTRO)`. `news.headline` = le titre. `threshold` = audimat minimum pour gagner.
+  - `game_started(news: NewsData)`, juste après `phase_changed(NEWS_INTRO)`. `news.headline` = le titre.
 - **À émettre** : `continue_requested()` quand le joueur est prêt (bouton « Continuer »). Pas de minuteur : la phase attend ce clic, tu peux jouer ton anim d'intro avant d'afficher le bouton.
 - **Sortie** : → `COMPOSITION`, le chrono démarre aussitôt.
 - **Attention** : après « Rejouer », l'audimat repasse à 0 **sans** `audimat_changed`. Remets ton compteur à zéro dans `game_started` (ou lis `MusicBus.get_audimat()`).
@@ -171,11 +170,11 @@ Chaque changement de combo ou de multiplicateur émet `combo_changed` (rien si l
 
 ### `GAME_OVER` : fin de partie
 
-- **À l'écran** : « GAGNÉ ! » ou « PERDU… », l'audimat obtenu face à l'objectif, un bouton « Rejouer ».
+- **À l'écran** : l'audimat obtenu (c'est le score : ni victoire ni défaite), un bouton « Rejouer ».
 - **Musique** : rien ne joue.
 - **À écouter** :
-  - `game_finished(won: bool, audimat: int)`, juste après `phase_changed(GAME_OVER)`. `won` = l'audimat a atteint l'objectif. **Remplis l'écran ici**, pas dans `phase_changed`.
-  - Getters à jour : `MusicBus.get_audimat()` (final), `MusicBus.get_threshold()` (objectif) et `MusicBus.get_current_news()`.
+  - `game_finished(audimat: int)`, juste après `phase_changed(GAME_OVER)`. `audimat` = le score final. **Remplis l'écran ici**, pas dans `phase_changed`.
+  - Getters à jour : `MusicBus.get_audimat()` (final) et `MusicBus.get_current_news()`.
 - **À émettre** : `restart_requested()` (bouton « Rejouer »).
 - **Sortie** : → `TITLE`, tout est remis à zéro.
 
@@ -278,7 +277,6 @@ Lisibles à tout moment, y compris dans `_ready` ; valeur par défaut sans risqu
 | `get_current_phase() -> MusicTypes.Phase` | La phase en cours | `TITLE` |
 | `get_current_news() -> NewsData` | La news de la partie, de `NEWS_INTRO` à `GAME_OVER` inclus | `null` |
 | `get_audimat() -> int` | Audimat : 0 jusqu'à la performance, en direct pendant, final en `GAME_OVER` | `0` |
-| `get_threshold() -> int` | Objectif d'audimat, le même pour toutes les parties | l'objectif aussi |
 | `get_song_time() -> float` | Temps du morceau entendu, en secondes (§4) | figé quand rien ne joue |
 
 ### `MusicTypes` : constantes et enums
@@ -326,7 +324,7 @@ Lecture : `is_active(lane, step) -> bool`, `get_column(step) -> Array[bool]` (le
 Les signatures ne bougeront pas : tu peux tout brancher dès maintenant.
 
 - **Une seule news** (`cat_mayor`), avec une boucle et des sons provisoires : chaque partie joue la même.
-- **Équilibrage** : l'objectif et les gains d'audimat sont des valeurs de test. Pour voir les deux fins : ne touche aucune note pendant la performance pour perdre ; pour gagner, enchaîne 25 notes parfaites sans erreur (une grille de 9 cases en donne 27 sur les 3 boucles), ou seulement 12 si la composition a obtenu x1,5.
+- **Équilibrage** : les gains d'audimat sont des valeurs de test.
 
 ---
 

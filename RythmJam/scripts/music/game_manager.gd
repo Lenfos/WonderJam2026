@@ -54,10 +54,6 @@ func get_audimat() -> int:
 	return _audimat
 
 
-func get_threshold() -> int:
-	return config.threshold
-
-
 func _on_start_game_requested() -> void:
 	if not _is_request_valid(MusicTypes.Phase.TITLE, "start_game_requested"):
 		return
@@ -67,7 +63,7 @@ func _on_start_game_requested() -> void:
 	_news = news
 	_last_news = news
 	_set_phase(MusicTypes.Phase.NEWS_INTRO)
-	MusicBus.game_started.emit(_news, get_threshold())
+	MusicBus.game_started.emit(_news)
 
 
 func _on_continue_requested() -> void:
@@ -114,7 +110,7 @@ func _on_performance_finished(audimat: int) -> void:
 		return
 	_audimat = audimat
 	_set_phase(MusicTypes.Phase.GAME_OVER)
-	MusicBus.game_finished.emit(_audimat >= get_threshold(), _audimat)
+	MusicBus.game_finished.emit(_audimat)
 
 
 func _set_phase(phase: MusicTypes.Phase) -> void:

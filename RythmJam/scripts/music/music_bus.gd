@@ -33,13 +33,13 @@ signal cell_toggle_requested(lane: int, step: int)
 ## Listen: UI, to switch screens.
 signal phase_changed(phase: MusicTypes.Phase)
 
-## NEWS_INTRO starts: a new game playing `news`. `threshold` is the minimum audimat to win.
-## Listen: UI, to show the breaking news headline and the goal.
-signal game_started(news: NewsData, threshold: int)
+## NEWS_INTRO starts: a new game playing `news`.
+## Listen: UI, to show the breaking news headline.
+signal game_started(news: NewsData)
 
-## GAME_OVER starts. `won` is true when `audimat` reached the threshold.
+## GAME_OVER starts. `audimat` is the final score; there is no win or loss, only a good or bad score.
 ## Listen: game over screen.
-signal game_finished(won: bool, audimat: int)
+signal game_finished(audimat: int)
 
 # --- MUSIC -> UI: COMPOSITION phase. ---
 
@@ -162,9 +162,3 @@ func get_audimat() -> int:
 		return 0
 	return _game_manager.get_audimat()
 
-
-## The minimum audimat to win; 0 when no GameManager runs.
-func get_threshold() -> int:
-	if not is_instance_valid(_game_manager):
-		return 0
-	return _game_manager.get_threshold()

@@ -104,7 +104,7 @@ func _init() -> void:
 		assert(comments.size() >= 1 and comments.size() <= 3 and not comments.has(""), "comments: %s" % comments)
 
 	var config: GameConfig = load("res://data/game_config.tres")
-	assert(news in config.news_pool and config.threshold > 0)
+	assert(news in config.news_pool)
 	config.news_pool = [news]
 	assert(config.draw_news(news) == news, "a single news is drawn again")
 	var other := NewsData.new()
@@ -118,7 +118,7 @@ func _init() -> void:
 	for signal_name in ["game_started", "game_finished", "performance_finished"]:
 		assert(bus.has_signal(signal_name), "MusicBus.%s is missing" % signal_name)
 	assert(bus.get_current_phase() == MusicTypes.Phase.TITLE and bus.get_current_news() == null, "defaults without a GameManager")
-	assert(bus.get_audimat() == 0 and bus.get_threshold() == 0 and bus.get_song_time() == 0.0, "defaults without a GameManager")
+	assert(bus.get_audimat() == 0 and bus.get_song_time() == 0.0, "defaults without a GameManager")
 	bus.free()
 
 	var lane_keys: Array[Key] = [KEY_D, KEY_F, KEY_J, KEY_K]
