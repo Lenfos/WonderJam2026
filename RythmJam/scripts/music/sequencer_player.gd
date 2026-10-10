@@ -32,10 +32,13 @@ var _end_beat: int = -1
 var _voices: Array[Array] = []
 ## Per lane: index in _voices[lane] of the next player to use.
 var _next_voice := PackedInt32Array()
+## Per lane: true while set_lane_muted() silences it.
+var _muted: Array[bool] = []
 
 
 func _ready() -> void:
 	_next_voice.resize(MusicTypes.LANE_COUNT)
+	_muted.resize(MusicTypes.LANE_COUNT)
 	for lane in MusicTypes.LANE_COUNT:
 		var pool: Array[AudioStreamPlayer] = []
 		for i in MELODIC_POOL_SIZE if _is_melodic(lane) else 1:
@@ -57,6 +60,13 @@ func start(clock: MusicClock, news: NewsData, composition: Composition, first_be
 	_composition = composition
 	_last_beat = first_beat - 1
 	_end_beat = end_beat
+	_muted.fill(false)
+
+
+## Skips a lane's notes from its next step on (samples already ringing finish), until unmuted
+## or the next start(). The performance mutes a lane on a missed note.
+func set_lane_muted(lane: int, muted: bool) -> void:
+	_muted[lane] = muted
 
 
 ## Stops stepping and cuts every ringing sample.
@@ -82,7 +92,7 @@ func _process(_delta: float) -> void:
 	var step := _clock.get_step(time)
 	if time - _clock.get_beat_time(beat) <= MAX_LATE_SEC:
 		for lane in MusicTypes.LANE_COUNT:
-			if _composition.is_active(lane, step):
+			if _composition.is_active(lane, step) and not _muted[lane]:
 				_play(lane, step)
 	MusicBus.step_changed.emit(step)
 

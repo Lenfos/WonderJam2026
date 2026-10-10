@@ -97,9 +97,10 @@ signal note_hit(note_index: int, lane: int, judgment: MusicTypes.Judgment)
 ## Listen: rhythm UI (miss feedback, remove that note).
 signal note_missed(note_index: int, lane: int)
 
-## PERFORMANCE phase. Fires whenever the combo or the multiplier changes:
-## PERFECT/GOOD hit (combo up), BAD hit (multiplier down, combo kept),
-## missed note or key press with no note within BAD_WINDOW_SEC (combo reset).
+## PERFORMANCE phase. Fires (0, 1.0) at the start of the performance, then whenever the combo or
+## the multiplier changes: PERFECT/GOOD hit (combo up, multiplier up every few hits),
+## BAD hit (multiplier down, combo kept), missed note or key press with no note within
+## BAD_WINDOW_SEC (combo reset, multiplier back to 1).
 ## Listen: combo counter UI.
 signal combo_changed(combo: int, multiplier: float)
 

@@ -20,6 +20,20 @@ enum Lane { KICK, SNARE, BRASS, BELLS }
 ## Result of one note in the rhythm phase.
 enum Judgment { PERFECT, GOOD, BAD, MISS }
 
+
+## Judgment of a press `offset_sec` from its note (press time - note time, early or late).
+## Windows are inclusive; MISS past BAD_WINDOW_SEC.
+static func judge(offset_sec: float) -> Judgment:
+	var distance := absf(offset_sec)
+	if distance <= PERFECT_WINDOW_SEC:
+		return Judgment.PERFECT
+	if distance <= GOOD_WINDOW_SEC:
+		return Judgment.GOOD
+	if distance <= BAD_WINDOW_SEC:
+		return Judgment.BAD
+	return Judgment.MISS
+
+
 ## Game flow phase, owned by the GameManager (see MusicBus.phase_changed and docs/CONTRACT.md).
 enum Phase { TITLE, NEWS_INTRO, COMPOSITION, COMPOSITION_REVIEW, PERFORMANCE, GAME_OVER }
 

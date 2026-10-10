@@ -9,7 +9,7 @@ Pour toi qui fais l'UI. Tu n'as jamais besoin d'ouvrir le code de `scripts/music
 - Le côté musique **décide de tout** : il possède le déroulement de la partie (phases, chrono, score, jugement des touches).
 - Ton UI **affiche** et **envoie des demandes**. Elle ne décide rien : même pour allumer une case, elle demande et attend la réponse.
 - Tout passe par l'autoload **`MusicBus`** : tu écoutes ses signaux, tu émets ses signaux `*_requested`, tu lis ses getters `get_*()`.
-- Ne référence **jamais** un nœud ou un script musique (`RoundManager`, `MusicClock`, `PerformancePhase`…). Seules exceptions, les classes de données : `MusicTypes`, `NewsData`, `NoteData`, `Composition`.
+- Ne référence **jamais** un nœud ou un script musique (`GameManager`, `MusicClock`, `PerformancePhase`…). Seules exceptions, les classes de données : `MusicTypes`, `NewsData`, `NoteData`, `Composition`.
 - Exemple complet qui marche : `scenes/debug/placeholder_ui.gd`.
 
 ---
@@ -25,7 +25,7 @@ Main
 │   ├── SequencerPlayer
 │   ├── CompositionPhase
 │   ├── PerformancePhase
-│   └── RoundManager   ← pilote toute la partie
+│   └── GameManager    ← pilote toute la partie
 └── UIRoot             ← ton UI ici
 	└── PlaceholderUI  ← UI provisoire, à remplacer par ta scène
 ```
@@ -62,26 +62,23 @@ Pas besoin de déconnecter les signaux : Godot coupe les connexions quand ton n�
 
 ## 3. Le déroulement d'une partie
 
-Une partie = 3 manches, une news par manche. Une manche ratée termine la partie.
+Une partie = une news, tirée au hasard (jamais deux fois de suite la même quand il y en a plusieurs). Le joueur gagne si l'audimat de la performance atteint l'objectif.
 
 ```
 TITLE
   │ start_game_requested (bouton « Jouer »)
   ▼
-NEWS_INTRO ◀────────────────────────────────────────────────────┐
-  │ continue_requested                                          │
-  ▼                                                             │
-COMPOSITION                                                     │
-  │ fin du chrono, ou finish_composition_requested              │
-  ▼                                                             │
-COMPOSITION_REVIEW                                              │
-  │ continue_requested                                          │
-  ▼                                                             │
-PERFORMANCE                                                     │
-  │ automatique : fin du morceau                                │
-  ▼                                                             │
-RESULTS ── continue_requested (manche réussie, il en reste) ────┘
-  │ continue_requested (manche ratée, ou dernière manche)
+NEWS_INTRO
+  │ continue_requested
+  ▼
+COMPOSITION
+  │ fin du chrono, ou finish_composition_requested
+  ▼
+COMPOSITION_REVIEW
+  │ continue_requested
+  ▼
+PERFORMANCE
+  │ automatique : fin du morceau
   ▼
 GAME_OVER
   │ restart_requested (bouton « Rejouer »)
@@ -91,30 +88,30 @@ TITLE
 
 ### Règles valables partout
 
-- **Change d'écran dans `phase_changed`, remplis-le avec les signaux de la phase.** `phase_changed` arrive en premier, puis les signaux propres à la nouvelle phase (`round_started`, `composition_started`…), dans la même frame.
+- **Change d'écran dans `phase_changed`, remplis-le avec les signaux de la phase.** `phase_changed` arrive en premier, puis les signaux propres à la nouvelle phase (`game_started`, `composition_started`…), dans la même frame.
 - Quand `phase_changed` arrive, les getters `MusicBus.get_*()` renvoient déjà les valeurs de la nouvelle phase.
 - **Au lancement**, pas de `phase_changed` : lis `MusicBus.get_current_phase()` dans ton `_ready` (c'est `TITLE`).
 - **Une demande émise hors de sa phase est ignorée** (warning dans la console, rien ne plante).
-- **Une seule demande par clic.** Exemple : un double-clic sur « Continuer » en `RESULTS` saute le flash info de la manche suivante. Cache ou désactive le bouton dès le clic.
+- **Une seule demande par clic.** Un double-clic envoie deux demandes : la seconde est ignorée (warning dans la console). Cache ou désactive le bouton dès le clic.
 - Si la fenêtre perd le focus, la musique, le chrono et `get_song_time()` se mettent en pause, puis reprennent.
 
 ### `TITLE` : écran titre
 
 - **À l'écran** : le titre du jeu, un bouton « Jouer ».
 - **Musique** : rien ne joue.
-- **À écouter** : rien de spécifique. Après « Rejouer », tout est remis à zéro : `get_current_news()` = `null`, `get_audimat()` = 0, `get_threshold()` = 0.
+- **À écouter** : rien de spécifique. Après « Rejouer », tout est remis à zéro : `get_current_news()` = `null`, `get_audimat()` = 0. `get_threshold()` garde l'objectif : il ne change pas d'une partie à l'autre.
 - **À émettre** : `start_game_requested()` au clic sur « Jouer ».
 - **Sortie** : → `NEWS_INTRO`.
 
 ### `NEWS_INTRO` : le flash info
 
-- **À l'écran** : « FLASH SPÉCIAL », le titre de la news, « Manche N », l'objectif d'audimat. Optionnel : la consigne bonus (`news.special_criterion`, voir §5).
+- **À l'écran** : « FLASH SPÉCIAL », le titre de la news, l'objectif d'audimat. Optionnel : la consigne bonus (`news.special_criterion`, voir §5).
 - **Musique** : rien ne joue.
 - **À écouter** :
-  - `round_started(round_index: int, news: NewsData, threshold: int)`, juste après `phase_changed(NEWS_INTRO)`. `round_index` commence à 0 : **affiche +1**. `news.headline` = le titre. `threshold` = audimat minimum pour réussir la manche.
+  - `game_started(news: NewsData, threshold: int)`, juste après `phase_changed(NEWS_INTRO)`. `news.headline` = le titre. `threshold` = audimat minimum pour gagner.
 - **À émettre** : `continue_requested()` quand le joueur est prêt (bouton « Continuer »). Pas de minuteur : la phase attend ce clic, tu peux jouer ton anim d'intro avant d'afficher le bouton.
 - **Sortie** : → `COMPOSITION`, le chrono démarre aussitôt.
-- **Attention** : l'audimat de la manche repasse à 0 ici **sans** `audimat_changed`. Remets ton compteur à zéro dans `round_started` (ou lis `MusicBus.get_audimat()`).
+- **Attention** : après « Rejouer », l'audimat repasse à 0 **sans** `audimat_changed`. Remets ton compteur à zéro dans `game_started` (ou lis `MusicBus.get_audimat()`).
 
 ### `COMPOSITION` : le joueur compose
 
@@ -145,49 +142,40 @@ Pour garder ta propre copie de la grille (c'est ce que fait `sequencer_grid.gd`)
 ### `PERFORMANCE` : le direct (jeu de rythme)
 
 - **À l'écran** : le plateau TV. Le présentateur et ses sous-titres, les 4 pistes de notes qui défilent (touches D F J K) avec la ligne de frappe, le décompte « 3, 2, 1, GO », le combo, l'audimat, des gags selon le chaos. Pour faire défiler les notes : §4.
-- **Musique** : la backing track redémarre, 4 temps de décompte, puis la composition est jouée automatiquement 3 fois de suite. Une boucle (16 temps) = une phrase du présentateur.
+- **Musique** : la backing track redémarre, 4 temps de décompte, puis la composition est jouée automatiquement 3 fois de suite. Une boucle (16 temps) = une phrase du présentateur. Quand le joueur rate une note, sa piste se tait jusqu'à la prochaine note touchée sur cette piste.
 - **À écouter**, dans l'ordre d'arrivée :
-  - `chaos_level_changed(0.0)` et `audimat_changed(0)` : remise à zéro, juste après `phase_changed(PERFORMANCE)`.
+  - `chaos_level_changed(0.0)`, `combo_changed(0, 1.0)` et `audimat_changed(0)` : remise à zéro, juste après `phase_changed(PERFORMANCE)`.
   - `performance_started(chart: Array, lead_time_sec: float)` : `chart` = toutes les notes à jouer (`Array` de `NoteData`, triées par temps). `lead_time_sec` = secondes avant le premier temps du chart (la durée du décompte). Crée tes notes ici. `chart` peut être vide (grille vide) : la phase se déroule quand même.
   - `countdown_beat(beats_left: int)` : à chaque temps du décompte, `4`, `3`, `2`, `1`, puis `0` sur le premier temps du chart (« GO »).
   - `anchor_line_changed(line_index: int)` : au début de chaque boucle. Le texte : `MusicBus.get_current_news().anchor_lines[line_index]` (index toujours valide).
   - `note_hit(note_index: int, lane: int, judgment: MusicTypes.Judgment)` : note touchée. `judgment` = `PERFECT`, `GOOD` ou `BAD`, jamais `MISS`. Retire la note `note_index`, affiche le feedback.
   - `note_missed(note_index: int, lane: int)` : note passée sans être touchée. Retire-la, feedback d'échec.
   - `combo_changed(combo: int, multiplier: float)` : le combo ou le multiplicateur de score a changé (règles ci-dessous).
-  - `audimat_changed(audimat: int)` : l'audimat a changé. C'est un nombre de téléspectateurs, sans plafond.
-  - `chaos_level_changed(level: float)` : 0 = plateau calme, 1 = chaos total (présentateur qui craque, décor qui tombe, problèmes techniques…).
+  - `audimat_changed(audimat: int)` : l'audimat a changé (à chaque note touchée). C'est un nombre de téléspectateurs, sans plafond.
+  - `chaos_level_changed(level: float)` : 0 = plateau calme, 1 = chaos total (présentateur qui craque, décor qui tombe, problèmes techniques…). Il monte beaucoup à chaque note ratée, un peu à chaque `BAD`, et redescend à chaque `PERFECT` ou `GOOD`.
   - `step_changed(step: int)` (optionnel) : comme en composition, si tu affiches la grille. Jamais pendant le décompte.
 - **À émettre** : **rien**. Les touches D F J K sont lues et jugées côté musique : n'envoie pas les appuis, ne juge rien toi-même. (Pour éclairer une piste quand sa touche est enfoncée : §4.)
-- **Sortie** : automatique à la fin de la 3ᵉ boucle → `RESULTS`. Tu reçois dans la même frame `audimat_changed` (audimat final), `phase_changed(RESULTS)` et `round_finished`.
+- **Sortie** : automatique à la fin de la 3ᵉ boucle → `GAME_OVER`. Les notes pas encore jugées reçoivent d'abord `note_missed`, puis tu reçois dans la même frame `phase_changed(GAME_OVER)` et `game_finished`.
 
-Ce que donne un appui sur une touche (écart = distance en temps à la note la plus proche sur cette piste) :
+Ce que donne un appui sur une touche (écart = distance en temps à la prochaine note de cette piste) :
 
-| Appui | Signal de note | Combo |
-|---|---|---|
-| Écart ≤ 0,050 s (`PERFECT_WINDOW_SEC`) | `note_hit(…, PERFECT)` | +1 |
-| Écart ≤ 0,100 s (`GOOD_WINDOW_SEC`) | `note_hit(…, GOOD)` | +1 |
-| Écart ≤ 0,150 s (`BAD_WINDOW_SEC`) | `note_hit(…, BAD)` | gardé, multiplicateur en baisse |
-| Aucune note à moins de 0,150 s | aucun | remis à 0 |
-| *(pas d'appui)* note dépassée de plus de 0,150 s | `note_missed` | remis à 0 |
+| Appui | Signal de note | Combo | Multiplicateur |
+|---|---|---|---|
+| Écart ≤ 0,050 s (`PERFECT_WINDOW_SEC`) | `note_hit(…, PERFECT)` | +1 | +0,5 tous les 8 de combo, max x3 |
+| Écart ≤ 0,100 s (`GOOD_WINDOW_SEC`) | `note_hit(…, GOOD)` | +1 | +0,5 tous les 8 de combo, max x3 |
+| Écart ≤ 0,150 s (`BAD_WINDOW_SEC`) | `note_hit(…, BAD)` | gardé | −0,5, min x1 |
+| Aucune note à moins de 0,150 s | aucun | remis à 0 | remis à x1 |
+| *(pas d'appui)* note dépassée de plus de 0,150 s | `note_missed` | remis à 0 | remis à x1 |
 
-Chaque changement de combo ou de multiplicateur émet `combo_changed`. Chaque note n'est jugée qu'une fois.
-
-### `RESULTS` : résultat de la manche
-
-- **À l'écran** : « Manche réussie ! » ou « Manche ratée… », l'audimat obtenu face à l'objectif, un bouton « Continuer ».
-- **Musique** : rien ne joue.
-- **À écouter** :
-  - `round_finished(success: bool, audimat: int)` : `success` = l'audimat a atteint l'objectif. **Remplis l'écran ici**, pas dans `phase_changed` : il arrive dans la même frame.
-  - Getters à jour : `MusicBus.get_audimat()` (final) et `MusicBus.get_threshold()` (objectif).
-- **À émettre** : `continue_requested()`.
-- **Sortie** : manche réussie et il en reste → `NEWS_INTRO` de la manche suivante (nouveau `round_started`). Sinon → `GAME_OVER`.
+Chaque changement de combo ou de multiplicateur émet `combo_changed` (rien si les deux sont inchangés, par exemple un appui dans le vide avec un combo déjà à 0). Chaque note n'est jugée qu'une fois. Une note touchée rapporte d'autant plus d'audimat que le jugement est bon et le multiplicateur haut (et que la composition a été bien notée).
 
 ### `GAME_OVER` : fin de partie
 
-- **À l'écran** : « GAGNÉ ! » ou « PERDU… », l'audimat total, un bouton « Rejouer ».
+- **À l'écran** : « GAGNÉ ! » ou « PERDU… », l'audimat obtenu face à l'objectif, un bouton « Rejouer ».
 - **Musique** : rien ne joue.
 - **À écouter** :
-  - `game_finished(won: bool, total_audimat: int)`, juste après `phase_changed(GAME_OVER)`. `won` = toutes les manches réussies. `total_audimat` = somme des manches jouées.
+  - `game_finished(won: bool, audimat: int)`, juste après `phase_changed(GAME_OVER)`. `won` = l'audimat a atteint l'objectif. **Remplis l'écran ici**, pas dans `phase_changed`.
+  - Getters à jour : `MusicBus.get_audimat()` (final), `MusicBus.get_threshold()` (objectif) et `MusicBus.get_current_news()`.
 - **À émettre** : `restart_requested()` (bouton « Rejouer »).
 - **Sortie** : → `TITLE`, tout est remis à zéro.
 
@@ -288,9 +276,9 @@ Lisibles à tout moment, y compris dans `_ready` ; valeur par défaut sans risqu
 | Getter | Renvoie | Hors partie |
 |---|---|---|
 | `get_current_phase() -> MusicTypes.Phase` | La phase en cours | `TITLE` |
-| `get_current_news() -> NewsData` | La news de la manche en cours | `null` |
-| `get_audimat() -> int` | Audimat de la manche : 0 au début, en direct pendant la performance, final en `RESULTS` | `0` |
-| `get_threshold() -> int` | Objectif d'audimat de la manche | `0` |
+| `get_current_news() -> NewsData` | La news de la partie, de `NEWS_INTRO` à `GAME_OVER` inclus | `null` |
+| `get_audimat() -> int` | Audimat : 0 jusqu'à la performance, en direct pendant, final en `GAME_OVER` | `0` |
+| `get_threshold() -> int` | Objectif d'audimat, le même pour toutes les parties | l'objectif aussi |
 | `get_song_time() -> float` | Temps du morceau entendu, en secondes (§4) | figé quand rien ne joue |
 
 ### `MusicTypes` : constantes et enums
@@ -300,7 +288,7 @@ Jamais instancié : on écrit `MusicTypes.LANE_COUNT`, `MusicTypes.Lane.KICK`…
 - `LANE_COUNT` = 4, `STEP_COUNT` = 16. Un pas = un temps au `bpm` de la news.
 - `Lane` : `KICK`, `SNARE`, `BRASS`, `BELLS`, dans l'ordre d'affichage (touches D F J K). Partout, `lane` est un `int` de 0 à 3 et `step` un `int` de 0 à 15.
 - `Judgment` : `PERFECT`, `GOOD`, `BAD`, `MISS`.
-- `Phase` : `TITLE`, `NEWS_INTRO`, `COMPOSITION`, `COMPOSITION_REVIEW`, `PERFORMANCE`, `RESULTS`, `GAME_OVER`.
+- `Phase` : `TITLE`, `NEWS_INTRO`, `COMPOSITION`, `COMPOSITION_REVIEW`, `PERFORMANCE`, `GAME_OVER`.
 - `SpecialCriterion` (consigne bonus d'une news) : `VARIETY` (utiliser toutes les pistes), `DOWNBEAT_HITS` (des notes sur les pas 0, 4, 8, 12), `FINAL_HIT` (une note sur le dernier pas), `RISING_DENSITY` (plus de notes dans la 2ᵉ moitié), `SILENCE` (peu de notes).
 - Nom lisible d'une valeur : `MusicTypes.Phase.keys()[phase]` → `"COMPOSITION"`.
 
@@ -332,13 +320,11 @@ Lecture : `is_active(lane, step) -> bool`, `get_column(step) -> Array[bool]` (le
 Les signatures ne bougeront pas : tu peux tout brancher dès maintenant.
 
 - **Évaluation de la composition** : `quality` vaut toujours 0,5 et `comments` contient juste « (évaluation à venir) ».
-- **Performance** : les touches ne sont pas encore gérées. `note_hit`, `note_missed` et `combo_changed` ne sont jamais émis, le chaos reste à 0, et l'audimat n'est calculé qu'à la fin (un seul `audimat_changed` juste avant `round_finished`, en plus du 0 au départ). Les notes traversent donc la ligne de frappe sans disparaître : normal pour l'instant.
-- **Une seule news** (`cat_mayor`) : les 3 manches ont la même.
-- **Pour tester les deux fins** : avec le calcul provisoire, une vingtaine de cases allumées réussit les 3 manches ; moins de 8 fait perdre dès la manche 1.
+- **Une seule news** (`cat_mayor`), avec une boucle et des sons provisoires : chaque partie joue la même.
+- **Équilibrage** : l'objectif et les gains d'audimat sont des valeurs de test. Pour voir les deux fins : ne touche aucune note pendant la performance pour perdre ; avec une grille d'une vingtaine de cases, touches-en une quinzaine pour gagner.
 
 ---
 
 ## 7. Points ouverts (à trancher ensemble)
 
-1. **Nombre total de manches** : `round_started` donne l'index de la manche, pas le total (3). Pour afficher « Manche 1/3 », ou savoir en `RESULTS` si « Continuer » mène à la manche suivante ou à la fin, dis-le-moi : j'ajoute un getter.
-2. **Appui dans le vide** : il remet le combo à zéro (via `combo_changed`), mais aucun signal ne dit sur quelle piste. Si tu veux un feedback dédié, on ajoute `stray_pressed(lane)`.
+1. **Appui dans le vide** : il remet le combo à zéro (via `combo_changed`), mais aucun signal ne dit sur quelle piste. Si tu veux un feedback dédié, on ajoute `stray_pressed(lane)`.

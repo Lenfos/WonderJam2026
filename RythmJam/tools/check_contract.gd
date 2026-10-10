@@ -41,6 +41,12 @@ func _init() -> void:
 	far.brass_melody[0] = 11  # major pentatonic degree 11 = 26 semitones
 	assert("melody degree 11 is more than 24 semitones from the root" in far.validate())
 
+	assert(MusicTypes.judge(0.0) == MusicTypes.Judgment.PERFECT)
+	assert(MusicTypes.judge(-MusicTypes.PERFECT_WINDOW_SEC) == MusicTypes.Judgment.PERFECT, "windows are inclusive, early or late")
+	assert(MusicTypes.judge(MusicTypes.GOOD_WINDOW_SEC) == MusicTypes.Judgment.GOOD)
+	assert(MusicTypes.judge(-0.12) == MusicTypes.Judgment.BAD)
+	assert(MusicTypes.judge(MusicTypes.BAD_WINDOW_SEC + 0.001) == MusicTypes.Judgment.MISS)
+
 	# comp: SNARE on step 4, BELLS on the last step. 2 loops from beat 16, 0.5 s per beat.
 	var chart := NoteData.build_chart(comp, 0.5, 16, 2)
 	assert(chart.size() == 4)
