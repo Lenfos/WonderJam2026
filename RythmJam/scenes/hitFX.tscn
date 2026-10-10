@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://dui5e4ocf2a48"]
+
+[ext_resource type="Script" uid="uid://2tgh1lgtirx" path="res://scripts/hit_fx.gd" id="1_mhe2p"]
+
+[sub_resource type="Curve" id="Curve_gbqby"]
+_data = [Vector2(0, 1), 0.0, -2.2190263, 0, 0, Vector2(0.9915254, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_mhe2p"]
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 0)
+
+[node name="HitFX" type="CPUParticles2D" unique_id=1356497726]
+emitting = false
+amount = 16
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+emission_shape = 1
+emission_sphere_radius = 3.0
+spread = 180.0
+initial_velocity_min = 150.0
+initial_velocity_max = 300.0
+scale_amount_curve = SubResource("Curve_gbqby")
+color_ramp = SubResource("Gradient_mhe2p")
+script = ExtResource("1_mhe2p")

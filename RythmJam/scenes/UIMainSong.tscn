@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://go7n540iuvar"]
+
+[ext_resource type="Script" uid="uid://nehmq5l1cb6j" path="res://scripts/buttons_manager.gd" id="1_0wfyh"]
+
+[sub_resource type="Curve2D" id="Curve2D_uvfqa"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 519, 130, 0, 0, 0, 0, 403.58463, 665.8108)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_sugp2"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 555, 123, 0, 0, 0, 0, 519, 666)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_aybht"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 591, 124, 0, 0, 0, 0, 619.5085, 663.83905)
+}
+point_count = 2
+
+[sub_resource type="Curve2D" id="Curve2D_f56v5"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 623, 123, 0, 0, 0, 0, 730, 661)
+}
+point_count = 2
+
+[node name="PerformanceScreen" type="Node2D" unique_id=941835878 node_paths=PackedStringArray("lanes", "playfield")]
+script = ExtResource("1_0wfyh")
+lanes = [NodePath("Playfield/Path1"), NodePath("Playfield/Path2"), NodePath("Playfield/Path3"), NodePath("Playfield/Path4")]
+playfield = NodePath("Playfield")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1269984767]
+position = Vector2(370, 527)
+points = PackedVector2Array(0, 0, 405, 0)
+
+[node name="Playfield" type="Node2D" parent="." unique_id=1812428836]
+
+[node name="Path1" type="Path2D" parent="Playfield" unique_id=388645032]
+position = Vector2(-12.1128845, -8.986893)
+scale = Vector2(1.048387, 1.0152838)
+curve = SubResource("Curve2D_uvfqa")
+
+[node name="Path2" type="Path2D" parent="Playfield" unique_id=877687124]
+position = Vector2(7.0000305, 1.5258789e-05)
+curve = SubResource("Curve2D_sugp2")
+
+[node name="Path3" type="Path2D" parent="Playfield" unique_id=1317811206]
+position = Vector2(-4.189606, -1.2666547)
+scale = Vector2(1.0172414, 1.0021505)
+curve = SubResource("Curve2D_aybht")
+
+[node name="Path4" type="Path2D" parent="Playfield" unique_id=1231757638]
+position = Vector2(7.0000305, 1.5258789e-05)
+curve = SubResource("Curve2D_f56v5")

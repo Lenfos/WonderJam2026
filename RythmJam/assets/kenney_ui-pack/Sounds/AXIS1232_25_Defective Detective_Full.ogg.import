@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://26vd2kuft6if"
+path="res://.godot/imported/AXIS1232_25_Defective Detective_Full.ogg-8a48f9a74678a487edbad3d2dd0d67ef.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/kenney_ui-pack/Sounds/AXIS1232_25_Defective Detective_Full.ogg"
+dest_files=["res://.godot/imported/AXIS1232_25_Defective Detective_Full.ogg-8a48f9a74678a487edbad3d2dd0d67ef.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=0.0
+beat_count=0
+bar_beats=4

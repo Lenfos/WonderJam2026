@@ -1,0 +1,244 @@
+[gd_scene format=3 uid="uid://bx2h38y26cbw4"]
+
+[ext_resource type="Texture2D" uid="uid://njsdkibv0slm" path="res://assets/Bg_Menu.png" id="1_g18el"]
+[ext_resource type="Script" uid="uid://c16p8pe1fvnm3" path="res://scripts/UI/start_menu.gd" id="1_w2bo1"]
+[ext_resource type="AudioStream" uid="uid://bm7qgegaxn8d6" path="res://assets/kenney_ui-pack/Sounds/drop_001.ogg" id="2_i35m3"]
+[ext_resource type="Texture2D" uid="uid://dyobiu1onmxdo" path="res://assets/BreakingNewsText.png" id="2_yi547"]
+[ext_resource type="Texture2D" uid="uid://dgiwh3anernms" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_depth_flat.svg" id="3_8os0l"]
+[ext_resource type="AudioStream" uid="uid://dtuqcalmqyide" path="res://assets/kenney_ui-pack/Sounds/click-b.ogg" id="3_yarrf"]
+[ext_resource type="Texture2D" uid="uid://d11gulejpvcij" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_flat.svg" id="4_w2bo1"]
+[ext_resource type="AudioStream" uid="uid://rpqaco43amih" path="res://assets/kenney_ui-pack/Sounds/drop_002.ogg" id="4_wuxu6"]
+[ext_resource type="AudioStream" uid="uid://26vd2kuft6if" path="res://assets/kenney_ui-pack/Sounds/AXIS1232_25_Defective Detective_Full.ogg" id="4_yarrf"]
+[ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="5_8ljlw"]
+[ext_resource type="Shader" uid="uid://bln83w46ta6ug" path="res://scripts/UI/twinkle2.gdshader" id="5_yarrf"]
+[ext_resource type="Texture2D" uid="uid://d30ig2u8vvlt4" path="res://assets/kenney_toon-characters/Male person/Vector/Character.png" id="11_3k5yw"]
+[ext_resource type="Texture2D" uid="uid://byx1hpd55uuuq" path="res://assets/dialogue.png" id="12_s5o3k"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yarrf"]
+shader = ExtResource("5_yarrf")
+shader_parameter/speed = 4.0
+shader_parameter/cell_px = 3.0
+shader_parameter/threshold = 0.12
+shader_parameter/glow_color = Color(1, 0.85, 0.35, 1)
+shader_parameter/glow_strength = 0.9
+shader_parameter/halo_strength = 1.4
+shader_parameter/halo_radius = 2.0
+shader_parameter/debug_mask = false
+
+[sub_resource type="LabelSettings" id="LabelSettings_uvfqa"]
+font = ExtResource("5_8ljlw")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_aybht"]
+font = ExtResource("5_8ljlw")
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_f56v5"]
+font = ExtResource("5_8ljlw")
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_s5o3k"]
+load_path = "res://.godot/imported/button_rectangle_depth_flat.svg-531403cbeb81601b241f2d44b8f2b2c4.ctex"
+
+[sub_resource type="LabelSettings" id="LabelSettings_joxl0"]
+font = ExtResource("5_8ljlw")
+font_size = 30
+
+[node name="StartMenu" type="Control" unique_id=1225066007]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_w2bo1")
+hover_sfx = ExtResource("2_i35m3")
+click_sfx = ExtResource("3_yarrf")
+blip_sfx = ExtResource("4_wuxu6")
+music = ExtResource("4_yarrf")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=471709018]
+material = SubResource("ShaderMaterial_yarrf")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_g18el")
+expand_mode = 1
+
+[node name="StartMenu" type="Control" parent="TextureRect" unique_id=565025602]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="logo" type="TextureRect" parent="TextureRect/StartMenu" unique_id=261076895]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+custom_maximum_size = Vector2(500, 200)
+layout_mode = 1
+offset_left = 31.0
+offset_top = 37.0
+offset_right = 331.0
+offset_bottom = 137.0
+offset_transform_enabled = true
+texture = ExtResource("2_yi547")
+expand_mode = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="TextureRect/StartMenu" unique_id=449897231]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 100.0
+offset_top = 232.0
+offset_right = 292.00003
+offset_bottom = 376.0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TextureRect/StartMenu/MarginContainer" unique_id=1176843363]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="playButton" type="TextureButton" parent="TextureRect/StartMenu/MarginContainer/VBoxContainer" unique_id=249156914]
+unique_name_in_owner = true
+layout_mode = 2
+texture_normal = ExtResource("3_8os0l")
+texture_pressed = ExtResource("4_w2bo1")
+
+[node name="Label" type="Label" parent="TextureRect/StartMenu/MarginContainer/VBoxContainer/playButton" unique_id=1304869866]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -27.0
+offset_top = -11.5
+offset_right = 27.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "PLAY"
+label_settings = SubResource("LabelSettings_uvfqa")
+
+[node name="quitButton" type="TextureButton" parent="TextureRect/StartMenu/MarginContainer/VBoxContainer" unique_id=2064417492]
+unique_name_in_owner = true
+layout_mode = 2
+texture_normal = ExtResource("3_8os0l")
+texture_pressed = ExtResource("4_w2bo1")
+
+[node name="Label" type="Label" parent="TextureRect/StartMenu/MarginContainer/VBoxContainer/quitButton" unique_id=615662604]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -42.5
+offset_top = -17.5
+offset_right = 42.5
+offset_bottom = 17.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "QUIT"
+label_settings = SubResource("LabelSettings_aybht")
+
+[node name="News" type="Control" parent="TextureRect" unique_id=1771217790]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1152.0
+offset_right = 1152.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="character" type="TextureRect" parent="TextureRect/News" unique_id=969256876]
+custom_minimum_size = Vector2(500, 650)
+custom_maximum_size = Vector2(500, 650)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -515.99994
+offset_top = -589.0
+offset_right = -16.0
+offset_bottom = 61.0
+grow_horizontal = 0
+grow_vertical = 0
+rotation = -0.17453292
+pivot_offset = Vector2(400, 650)
+texture = ExtResource("11_3k5yw")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="DialogueBG" type="TextureRect" parent="TextureRect/News" unique_id=725865123]
+custom_minimum_size = Vector2(500, -1)
+custom_maximum_size = Vector2(500, -1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -403.0
+offset_top = -280.0
+offset_right = 97.0
+offset_bottom = 320.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_s5o3k")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="DialogueLabel" type="Label" parent="TextureRect/News/DialogueBG" unique_id=705861666]
+custom_minimum_size = Vector2(322, 144)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 68.0
+offset_right = 142.0
+offset_bottom = 212.0
+grow_horizontal = 2
+rotation = -0.2268928
+pivot_offset = Vector2(161, 69)
+text = "We just received a breathtaking news and we need to be live in 5 min ! Hurry up and compose something !!! 
+But don't forget, you'll have to play it live after"
+label_settings = SubResource("LabelSettings_f56v5")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="startButton" type="TextureButton" parent="TextureRect/News" unique_id=1240864049]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 285.0
+offset_top = -179.0
+offset_right = 477.0
+offset_bottom = -115.0
+grow_vertical = 0
+texture_normal = SubResource("CompressedTexture2D_s5o3k")
+
+[node name="Label" type="Label" parent="TextureRect/News/startButton" unique_id=960352668]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -94.0
+offset_top = -11.5
+offset_right = 94.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Start"
+label_settings = SubResource("LabelSettings_joxl0")
+horizontal_alignment = 1

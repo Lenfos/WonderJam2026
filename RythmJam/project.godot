@@ -20,6 +20,10 @@ config/icon="res://icon.png"
 
 MusicBus="*res://scripts/music/music_bus.gd"
 
+[display]
+
+window/stretch/mode="canvas_items"
+
 [input]
 
 lane_0={
