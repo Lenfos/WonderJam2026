@@ -135,7 +135,7 @@ Pour garder ta propre copie de la grille (c'est ce que fait `sequencer_grid.gd`)
 - **À l'écran** : la note de la composition (`quality` en % ou en étoiles), le multiplicateur obtenu (« x1.50 »), les commentaires. La grille finale peut rester affichée, sans tête de lecture.
 - **Musique** : la backing track continue, mais la grille n'est plus jouée (plus de `step_changed`).
 - **À écouter** :
-  - `composition_evaluated(quality: float, multiplier: float, comments: PackedStringArray)`, juste après `phase_changed(COMPOSITION_REVIEW)`. `quality` de 0 à 1 = adéquation de la grille à la news. `multiplier` = multiplicateur appliqué à l'audimat de la performance. `comments` = remarques courtes en français, prêtes à afficher.
+  - `composition_evaluated(quality: float, multiplier: float, comments: PackedStringArray)`, juste après `phase_changed(COMPOSITION_REVIEW)`. `quality` de 0 à 1 = adéquation de la grille à la news. `multiplier` = multiplicateur appliqué à l'audimat de la performance, de x0,5 (grille ratée ou vide) à x1,5 (grille parfaite). `comments` = 1 à 3 remarques courtes en français, une ligne chacune, prêtes à afficher (toujours au moins une).
 - **À émettre** : `continue_requested()` (bouton « Continuer »).
 - **Sortie** : → `PERFORMANCE`.
 
@@ -286,10 +286,16 @@ Lisibles à tout moment, y compris dans `_ready` ; valeur par défaut sans risqu
 Jamais instancié : on écrit `MusicTypes.LANE_COUNT`, `MusicTypes.Lane.KICK`…
 
 - `LANE_COUNT` = 4, `STEP_COUNT` = 16. Un pas = un temps au `bpm` de la news.
+- `STEPS_PER_BAR` = 4 : pas par mesure. Pratique pour grouper les colonnes de la grille : un temps fort est un pas où `step % STEPS_PER_BAR == 0` (pas 0, 4, 8, 12).
 - `Lane` : `KICK`, `SNARE`, `BRASS`, `BELLS`, dans l'ordre d'affichage (touches D F J K). Partout, `lane` est un `int` de 0 à 3 et `step` un `int` de 0 à 15.
 - `Judgment` : `PERFECT`, `GOOD`, `BAD`, `MISS`.
 - `Phase` : `TITLE`, `NEWS_INTRO`, `COMPOSITION`, `COMPOSITION_REVIEW`, `PERFORMANCE`, `GAME_OVER`.
-- `SpecialCriterion` (consigne bonus d'une news) : `VARIETY` (utiliser toutes les pistes), `DOWNBEAT_HITS` (des notes sur les pas 0, 4, 8, 12), `FINAL_HIT` (une note sur le dernier pas), `RISING_DENSITY` (plus de notes dans la 2ᵉ moitié), `SILENCE` (peu de notes).
+- `SpecialCriterion` (consigne bonus d'une news, remplie ou non) :
+  - `VARIETY` : chaque piste a au moins une note.
+  - `DOWNBEAT_HITS` : chaque temps fort (pas 0, 4, 8, 12, voir `STEPS_PER_BAR`) a au moins une note, n'importe quelle piste.
+  - `FINAL_HIT` : au moins une note sur le dernier pas (`STEP_COUNT - 1`).
+  - `RISING_DENSITY` : strictement plus de notes sur les pas 8 à 15 que sur les pas 0 à 7, toutes pistes confondues.
+  - `SILENCE` : au plus 75 % des notes attendues (somme des `target_density` × `STEP_COUNT`).
 - Nom lisible d'une valeur : `MusicTypes.Phase.keys()[phase]` → `"COMPOSITION"`.
 
 ### `NewsData` : une news
@@ -319,9 +325,8 @@ Lecture : `is_active(lane, step) -> bool`, `get_column(step) -> Array[bool]` (le
 
 Les signatures ne bougeront pas : tu peux tout brancher dès maintenant.
 
-- **Évaluation de la composition** : `quality` vaut toujours 0,5 et `comments` contient juste « (évaluation à venir) ».
 - **Une seule news** (`cat_mayor`), avec une boucle et des sons provisoires : chaque partie joue la même.
-- **Équilibrage** : l'objectif et les gains d'audimat sont des valeurs de test. Pour voir les deux fins : ne touche aucune note pendant la performance pour perdre ; avec une grille d'une vingtaine de cases, touches-en une quinzaine pour gagner.
+- **Équilibrage** : l'objectif et les gains d'audimat sont des valeurs de test. Pour voir les deux fins : ne touche aucune note pendant la performance pour perdre ; pour gagner, enchaîne 25 notes parfaites sans erreur (une grille de 9 cases en donne 27 sur les 3 boucles), ou seulement 12 si la composition a obtenu x1,5.
 
 ---
 

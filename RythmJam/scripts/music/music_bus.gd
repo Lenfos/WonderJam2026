@@ -65,8 +65,8 @@ signal composition_changed(lane: int, step: int, active: bool)
 ## Listen: UI, if it needs the final grid.
 signal composition_finished(composition: Composition)
 
-## COMPOSITION_REVIEW starts. `quality` 0-1 is how well the grid fits the news, `multiplier` scales
-## the performance audimat, `comments` are short French remarks to show the player.
+## COMPOSITION_REVIEW starts. `quality` 0-1 is how well the grid fits the news, `multiplier` (x0.5 to
+## x1.5) scales the performance audimat, `comments` are 1 to 3 short French lines to show the player.
 ## Listen: review screen.
 signal composition_evaluated(quality: float, multiplier: float, comments: PackedStringArray)
 

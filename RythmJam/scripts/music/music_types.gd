@@ -5,6 +5,8 @@ class_name MusicTypes
 const LANE_COUNT := 4
 ## Number of steps in the sequencer grid. One step = one beat at the news bpm.
 const STEP_COUNT := 16
+## Steps per bar: a downbeat is a step where step % STEPS_PER_BAR == 0. Groups the grid columns.
+const STEPS_PER_BAR := 4
 
 ## Max |press time - note time|, in seconds, for a PERFECT hit.
 const PERFECT_WINDOW_SEC := 0.050
@@ -70,15 +72,15 @@ static func semitones_to_pitch_scale(semitones: int) -> float:
 
 ## Bonus rule a news item rewards on top of matching its target densities.
 enum SpecialCriterion {
-	## Use every lane.
+	## Every lane has at least one note.
 	VARIETY,
-	## Hit on the first beat of each bar (steps 0, 4, 8, 12).
+	## Every downbeat (step % STEPS_PER_BAR == 0) has at least one note, any lane.
 	DOWNBEAT_HITS,
-	## Hit on the last step.
+	## At least one note on the last step.
 	FINAL_HIT,
-	## More notes in the second half of the grid than in the first.
+	## Strictly more notes in the second half of the steps than in the first, all lanes combined.
 	RISING_DENSITY,
-	## Leave room: few notes overall.
+	## Total notes at most CompositionEvaluator.SILENCE_MAX_RATIO of the expected total.
 	SILENCE,
 }
 

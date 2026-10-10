@@ -63,6 +63,45 @@ func _init() -> void:
 
 	var evaluation := CompositionEvaluator.evaluate(comp, news)
 	assert(evaluation.has("quality") and evaluation.has("multiplier") and evaluation["comments"] is PackedStringArray)
+	assert(CompositionEvaluator.lane_score(6, 4.0) == 1.0, "a 2-cell gap is tolerated")
+	assert(CompositionEvaluator.lane_score(0, 4.0) == 0.5, "a 4-cell gap halves the lane score")
+	assert(CompositionEvaluator.lane_score(2, 8.0) == 0.0 and CompositionEvaluator.lane_score(16, 4.0) == 0.0)
+
+	# Exactly cat_mayor's 8/4/4/4: kick on even steps, then snare/brass/bells on steps 1/2/3 of each bar.
+	var perfect := Composition.new()
+	for step in MusicTypes.STEP_COUNT:
+		perfect.set_cell(MusicTypes.Lane.KICK, step, step % 2 == 0)
+		if step % MusicTypes.STEPS_PER_BAR != 0:
+			perfect.set_cell(step % MusicTypes.STEPS_PER_BAR, step, true)
+	var best := CompositionEvaluator.evaluate(perfect, news)
+	assert(is_equal_approx(best["quality"], 1.0) and is_equal_approx(best["multiplier"], 1.5), "cat_mayor grid: %s" % best)
+	var empty := CompositionEvaluator.evaluate(Composition.new(), news)
+	assert(empty["quality"] == 0.0 and is_equal_approx(empty["multiplier"], 0.5) and empty["comments"].size() == 1)
+
+	var first_only := Composition.new()
+	first_only.set_cell(MusicTypes.Lane.KICK, 0, true)
+	var last_only := Composition.new()
+	last_only.set_cell(MusicTypes.Lane.BELLS, MusicTypes.STEP_COUNT - 1, true)
+	var rule := NewsData.new()
+	rule.special_criterion = MusicTypes.SpecialCriterion.VARIETY
+	assert(CompositionEvaluator.is_criterion_met(perfect, rule) and not CompositionEvaluator.is_criterion_met(comp, rule))
+	rule.special_criterion = MusicTypes.SpecialCriterion.DOWNBEAT_HITS
+	assert(CompositionEvaluator.is_criterion_met(perfect, rule) and not CompositionEvaluator.is_criterion_met(comp, rule))
+	rule.special_criterion = MusicTypes.SpecialCriterion.FINAL_HIT
+	assert(CompositionEvaluator.is_criterion_met(last_only, rule) and not CompositionEvaluator.is_criterion_met(first_only, rule))
+	rule.special_criterion = MusicTypes.SpecialCriterion.RISING_DENSITY
+	assert(CompositionEvaluator.is_criterion_met(last_only, rule) and not CompositionEvaluator.is_criterion_met(comp, rule), "1 note per half is not rising")
+	rule.special_criterion = MusicTypes.SpecialCriterion.SILENCE
+	rule.target_density = news.target_density  # 20 notes expected, so at most 15.
+	assert(CompositionEvaluator.is_criterion_met(comp, rule) and not CompositionEvaluator.is_criterion_met(perfect, rule))
+
+	var full := Composition.new()
+	for lane in MusicTypes.LANE_COUNT:
+		for step in MusicTypes.STEP_COUNT:
+			full.set_cell(lane, step, true)
+	for grid: Composition in [comp, perfect, Composition.new(), first_only, last_only, full]:
+		var comments: PackedStringArray = CompositionEvaluator.evaluate(grid, news)["comments"]
+		assert(comments.size() >= 1 and comments.size() <= 3 and not comments.has(""), "comments: %s" % comments)
 
 	var config: GameConfig = load("res://data/game_config.tres")
 	assert(news in config.news_pool and config.threshold > 0)
