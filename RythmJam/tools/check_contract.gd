@@ -59,15 +59,22 @@ func _init() -> void:
 	assert(evaluation.has("quality") and evaluation.has("multiplier") and evaluation["comments"] is PackedStringArray)
 
 	var config: GameConfig = load("res://data/game_config.tres")
-	assert(config.first_news == news and config.round_thresholds.size() == config.round_count)
-	assert(config.get_threshold(99) == config.round_thresholds[-1], "rounds past the array reuse the last threshold")
-	var rounds := config.draw_rounds()  # pool too small: warns and repeats
-	assert(rounds.size() == config.round_count and rounds[0] == news)
-	var other_a := NewsData.new()
-	var other_b := NewsData.new()
-	config.news_pool = [news, other_a, other_b]
-	rounds = config.draw_rounds()
-	assert(rounds[0] == news and other_a in rounds and other_b in rounds, "no repeats, first_news only first")
+	assert(news in config.news_pool and config.threshold > 0)
+	config.news_pool = [news]
+	assert(config.draw_news(news) == news, "a single news is drawn again")
+	var other := NewsData.new()
+	config.news_pool = [news, other]
+	for _i in 20:
+		assert(config.draw_news(news) == other and config.draw_news(other) == news, "never the previous news when another exists")
+	assert(config.draw_news() in config.news_pool)
+
+	# A fresh MusicBus, not the autoload: autoloads may not exist yet in _init of a --script run.
+	var bus: Node = load("res://scripts/music/music_bus.gd").new()
+	for signal_name in ["game_started", "game_finished", "performance_finished"]:
+		assert(bus.has_signal(signal_name), "MusicBus.%s is missing" % signal_name)
+	assert(bus.get_current_phase() == MusicTypes.Phase.TITLE and bus.get_current_news() == null, "defaults without a GameManager")
+	assert(bus.get_audimat() == 0 and bus.get_threshold() == 0 and bus.get_song_time() == 0.0, "defaults without a GameManager")
+	bus.free()
 
 	var lane_keys: Array[Key] = [KEY_D, KEY_F, KEY_J, KEY_K]
 	for lane in MusicTypes.LANE_COUNT:

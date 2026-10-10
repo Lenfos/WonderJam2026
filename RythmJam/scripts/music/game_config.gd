@@ -1,41 +1,20 @@
 class_name GameConfig
 extends Resource
-## Game flow settings: which news each round plays and the audimat needed to pass it.
-## Instance used by the RoundManager: res://data/game_config.tres.
+## Game flow settings: which news a game can play and the audimat needed to win.
+## Instance used by the GameManager: res://data/game_config.tres.
 
-## Round 1, always: the tutorial-friendly news.
-@export var first_news: NewsData
-## Rounds 2+ are drawn from it without repeats (first_news excluded).
+## Each game plays one news drawn from it (see draw_news).
 @export var news_pool: Array[NewsData] = []
-@export var round_count: int = 3
-## Minimum audimat to pass each round, indexed by 0-based round. Placeholder values.
-@export var round_thresholds: PackedInt32Array
+## Minimum audimat to win. Placeholder value.
+@export var threshold: int = 2000
 @export var composition_duration_sec: float = 45.0
 
 
-## One news per round: first_news, then draws from news_pool without repeats.
-## A pool too small for round_count repeats news, with a warning.
-func draw_rounds() -> Array[NewsData]:
-	if round_thresholds.size() != round_count:
-		push_warning("GameConfig: %d round_thresholds for %d rounds" % [round_thresholds.size(), round_count])
-	var pool: Array[NewsData] = []
-	pool.assign(news_pool.filter(func(news: NewsData) -> bool: return news != first_news))
-	if pool.size() < round_count - 1:
-		push_warning("GameConfig: %d news in news_pool for %d rounds after the first, some repeat" % [pool.size(), round_count - 1])
-		if pool.is_empty():
-			pool.append(first_news)
-	var rounds: Array[NewsData] = [first_news]
-	var bag: Array[NewsData] = []
-	while rounds.size() < round_count:
-		if bag.is_empty():
-			bag.assign(pool)
-			bag.shuffle()
-		rounds.append(bag.pop_back())
-	return rounds
-
-
-## Minimum audimat of a 0-based round. Rounds past the array reuse its last value.
-func get_threshold(round_index: int) -> int:
-	if round_thresholds.is_empty():
-		return 0
-	return round_thresholds[mini(round_index, round_thresholds.size() - 1)]
+## A random news of news_pool, different from `previous` when the pool has more than one.
+## null, with an error, when the pool is empty.
+func draw_news(previous: NewsData = null) -> NewsData:
+	if news_pool.is_empty():
+		push_error("GameConfig: news_pool is empty, no news to play")
+		return null
+	var others := news_pool.filter(func(news: NewsData) -> bool: return news != previous)
+	return others.pick_random() if not others.is_empty() else news_pool.pick_random()

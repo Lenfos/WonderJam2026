@@ -9,7 +9,7 @@ const SEQUENCER_GRID := preload("res://scenes/debug/sequencer_grid.tscn")
 const GRID_PHASES := [MusicTypes.Phase.COMPOSITION, MusicTypes.Phase.COMPOSITION_REVIEW, MusicTypes.Phase.PERFORMANCE]
 
 var _phase_label := Label.new()
-var _round_label := Label.new()
+var _news_label := Label.new()
 var _audimat_label := Label.new()
 var _info_label := Label.new()
 var _song_time_label := Label.new()
@@ -19,7 +19,7 @@ var _grid: Control
 
 
 func _ready() -> void:
-	for label in [_phase_label, _round_label, _audimat_label, _info_label, _song_time_label]:
+	for label in [_phase_label, _news_label, _audimat_label, _info_label, _song_time_label]:
 		add_child(label)
 	var bar := HBoxContainer.new()
 	add_child(bar)
@@ -27,19 +27,17 @@ func _ready() -> void:
 	_add_button(bar, MusicTypes.Phase.NEWS_INTRO, "Continuer", MusicBus.continue_requested)
 	_add_button(bar, MusicTypes.Phase.COMPOSITION, "J'ai fini", MusicBus.finish_composition_requested)
 	_add_button(bar, MusicTypes.Phase.COMPOSITION_REVIEW, "Continuer", MusicBus.continue_requested)
-	_add_button(bar, MusicTypes.Phase.RESULTS, "Continuer", MusicBus.continue_requested)
 	_add_button(bar, MusicTypes.Phase.GAME_OVER, "Rejouer", MusicBus.restart_requested)
 	_grid = SEQUENCER_GRID.instantiate()
 	add_child(_grid)
 
 	MusicBus.phase_changed.connect(_on_phase_changed)
-	MusicBus.round_started.connect(_on_round_started)
+	MusicBus.game_started.connect(_on_game_started)
 	MusicBus.composition_evaluated.connect(_on_composition_evaluated)
 	MusicBus.performance_started.connect(_on_performance_started)
 	MusicBus.countdown_beat.connect(_on_countdown_beat)
 	MusicBus.anchor_line_changed.connect(_on_anchor_line_changed)
 	MusicBus.audimat_changed.connect(func(audimat: int) -> void: _audimat_label.text = "Audimat : %d" % audimat)
-	MusicBus.round_finished.connect(_on_round_finished)
 	MusicBus.game_finished.connect(_on_game_finished)
 	# phase_changed only fires on transitions: read the starting phase once.
 	_on_phase_changed(MusicBus.get_current_phase())
@@ -60,15 +58,15 @@ func _on_phase_changed(phase: MusicTypes.Phase) -> void:
 	set_process(phase == MusicTypes.Phase.PERFORMANCE)
 	match phase:
 		MusicTypes.Phase.TITLE:
-			_round_label.text = ""
+			_news_label.text = ""
 			_audimat_label.text = ""
 			_info_label.text = "Appuie sur Jouer"
 		MusicTypes.Phase.COMPOSITION:
 			_info_label.text = "Compose ! Clique les cases, puis J'ai fini"
 
 
-func _on_round_started(round_index: int, news: NewsData, threshold: int) -> void:
-	_round_label.text = "Manche %d : %s   (objectif : %d téléspectateurs)" % [round_index + 1, news.headline, threshold]
+func _on_game_started(news: NewsData, threshold: int) -> void:
+	_news_label.text = "%s   (objectif : %d téléspectateurs)" % [news.headline, threshold]
 	_audimat_label.text = "Audimat : %d" % MusicBus.get_audimat()
 	_info_label.text = "FLASH SPÉCIAL : %s" % news.headline
 
@@ -89,13 +87,13 @@ func _on_anchor_line_changed(line_index: int) -> void:
 	_info_label.text = "Présentateur : « %s »" % MusicBus.get_current_news().anchor_lines[line_index]
 
 
-func _on_round_finished(success: bool, audimat: int) -> void:
-	var verdict := "Manche réussie !" if success else "Manche ratée..."
-	_info_label.text = "%s %d / %d téléspectateurs" % [verdict, audimat, MusicBus.get_threshold()]
-
-
-func _on_game_finished(won: bool, total_audimat: int) -> void:
-	_info_label.text = "%s Audimat total : %d" % ["GAGNÉ !" if won else "PERDU...", total_audimat]
+func _on_game_finished(won: bool, audimat: int) -> void:
+	_info_label.text = "%s\n%s\n%d / %d téléspectateurs" % [
+		"GAGNÉ !" if won else "PERDU...",
+		MusicBus.get_current_news().headline,
+		audimat,
+		MusicBus.get_threshold(),
+	]
 
 
 func _add_button(bar: HBoxContainer, phase: MusicTypes.Phase, text: String, request: Signal) -> void:

@@ -1,8 +1,8 @@
 extends VBoxContainer
-## Debug harness for the COMPOSITION phase alone, without the RoundManager: the debug grid plus
+## Debug harness for the COMPOSITION phase alone, without the GameManager: the debug grid plus
 ## the music nodes. Keys: Space = start, E = finish early (grid keys: C = clear, R = random fill).
 
-## Round-flow side, not UI: in the game, the RoundManager starts and ends the phase.
+## Game-flow side, not UI: in the game, the GameManager starts and ends the phase.
 @export var news: NewsData = preload("res://data/news/cat_mayor.tres")
 
 @onready var _phase: CompositionPhase = $CompositionPhase

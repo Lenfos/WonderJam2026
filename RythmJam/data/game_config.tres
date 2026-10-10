@@ -6,8 +6,6 @@
 
 [resource]
 script = ExtResource("1_config")
-first_news = ExtResource("3_cat")
 news_pool = Array[ExtResource("2_news")]([ExtResource("3_cat")])
-round_count = 3
-round_thresholds = PackedInt32Array(1000, 2000, 3000)
+threshold = 2000
 composition_duration_sec = 45.0

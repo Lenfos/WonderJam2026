@@ -1,6 +1,6 @@
 class_name NewsData
 extends Resource
-## One breaking-news item: what the anchor says and how the round sounds.
+## One breaking-news item: what the anchor says and how the game sounds while it plays.
 ## One .tres per news item in res://data/news/.
 
 ## Unique key, e.g. &"cat_mayor".
@@ -10,7 +10,7 @@ extends Resource
 ## Lines the anchor reads during the performance phase, in order.
 @export var anchor_lines: PackedStringArray
 
-## Tempo of the round. One sequencer step = one beat.
+## Tempo of the game. One sequencer step = one beat.
 @export var bpm: float = 120.0
 @export var scale: MusicTypes.ScaleType = MusicTypes.ScaleType.MAJOR_PENTATONIC
 ## Expected fraction of active steps (0-1) per lane, indexed by MusicTypes.Lane.

@@ -2,7 +2,7 @@ class_name PerformancePhase
 extends Node
 ## Runs the PERFORMANCE phase: a count-in, then the composition replayed loop_count times over the
 ## backing track as a chart the player plays (keys D F J K). Talks to the UI only through MusicBus.
-## Ends with MusicBus.round_finished.
+## Ends with MusicBus.performance_finished.
 # STUB — replaced in phase 3: no input or judgment yet (note_hit, note_missed, combo_changed never
 # fire, chaos stays 0) and the audimat is faked at the end. The chart, the count-in, the anchor
 # lines and the start() signature are real: keep them.
@@ -22,7 +22,6 @@ var _running := false
 var _news: NewsData
 var _composition: Composition
 var _multiplier := 1.0
-var _threshold := 0
 ## Absolute clock beats: step 0 of the first loop, and the end of the last loop.
 var _start_beat := 0
 var _end_beat := 0
@@ -32,12 +31,11 @@ var _next_countdown_beat := 0
 var _next_loop := 0
 
 
-## `multiplier` comes from the composition evaluation; `threshold` is the round's minimum audimat.
-func start(news: NewsData, composition: Composition, multiplier: float, threshold: int) -> void:
+## `multiplier` comes from the composition evaluation.
+func start(news: NewsData, composition: Composition, multiplier: float) -> void:
 	_news = news
 	_composition = composition
 	_multiplier = multiplier
-	_threshold = threshold
 	# The chart starts on a loop boundary so its steps line up with the backing track's bars:
 	# the clock starts count_in_beats earlier, near the end of a loop.
 	_start_beat = ceili(count_in_beats / float(MusicTypes.STEP_COUNT)) * MusicTypes.STEP_COUNT
@@ -79,4 +77,4 @@ func _finish() -> void:
 	# STUB: phase 3 builds the audimat from the player's hits instead.
 	var audimat := roundi(_composition.count_notes() * _multiplier * STUB_AUDIMAT_PER_NOTE)
 	MusicBus.audimat_changed.emit(audimat)
-	MusicBus.round_finished.emit(audimat >= _threshold, audimat)
+	MusicBus.performance_finished.emit(audimat)

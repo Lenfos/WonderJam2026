@@ -7,7 +7,7 @@ extends Node
 ## Beats are counted from the real loop length, not from bpm: every loop starts exactly on a
 ## multiple of beats_per_loop, so a stream slightly off bpm never drifts loop after loop.
 ## Web: Sample playback bypasses the AudioServer mix, so playback position is unreliable there.
-## The clock is a stopwatch started with the stream instead (rounds are short, drift negligible).
+## The clock is a stopwatch started with the stream instead (a game is short, drift negligible).
 ## Pauses on application focus loss and resumes in sync on focus back.
 
 ## Max allowed gap, in seconds, between the stream length and beats_per_loop at bpm.

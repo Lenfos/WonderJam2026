@@ -1,19 +1,20 @@
 extends Node
 ## Autoload "MusicBus": the only channel between music/gameplay code and UI (docs/CONTRACT.md).
 ## Music code emits state signals, UI code listens. *_requested signals go the other way: the UI
-## emits, music code (mostly the RoundManager) listens and answers with a state signal, so the UI
-## never calls music code directly. The getters relay the RoundManager's state for anytime reads.
+## emits, music code (mostly the GameManager) listens and answers with a state signal, so the UI
+## never calls music code directly. The getters relay the GameManager's state for anytime reads.
 ## Within one transition, state (getters) is updated first, then phase_changed fires, then the new
-## phase's own signals. A phase's *_finished signal fires before phase_changed to the next phase.
+## phase's own signals. A phase's *_finished signal triggers the transition to the next phase:
+## don't rely on its order relative to that phase_changed.
 
 # Signals are emitted from other scripts, so this file never "uses" them itself.
 @warning_ignore_start("unused_signal")
 
 # --- UI -> MUSIC: requests. Each one is ignored, with a warning, outside the phase it belongs to. ---
 
-## UI -> MUSIC. TITLE: the player clicked "Jouer". Answer: phase_changed(NEWS_INTRO) + round_started.
+## UI -> MUSIC. TITLE: the player clicked "Jouer". Answer: phase_changed(NEWS_INTRO) + game_started.
 signal start_game_requested
-## UI -> MUSIC. NEWS_INTRO, COMPOSITION_REVIEW, RESULTS: the player clicked "Continuer".
+## UI -> MUSIC. NEWS_INTRO, COMPOSITION_REVIEW: the player clicked "Continuer".
 ## Answer: phase_changed to the next phase (see the phase diagram).
 signal continue_requested
 ## UI -> MUSIC. COMPOSITION: the player clicked "J'ai fini". Answer: composition_finished, then
@@ -27,19 +28,18 @@ signal cell_toggle_requested(lane: int, step: int)
 
 # --- MUSIC -> UI: game flow. ---
 
-## Every phase transition, emitted by the RoundManager. Not emitted at startup: read
+## Every phase transition, emitted by the GameManager. Not emitted at startup: read
 ## get_current_phase() in _ready (TITLE).
 ## Listen: UI, to switch screens.
 signal phase_changed(phase: MusicTypes.Phase)
 
-## NEWS_INTRO starts: a new round. `round_index` is 0-based (display it +1); `threshold` is the
-## minimum audimat to pass this round.
+## NEWS_INTRO starts: a new game playing `news`. `threshold` is the minimum audimat to win.
 ## Listen: UI, to show the breaking news headline and the goal.
-signal round_started(round_index: int, news: NewsData, threshold: int)
+signal game_started(news: NewsData, threshold: int)
 
-## GAME_OVER starts. `won` is true when every round passed; `total_audimat` sums all played rounds.
+## GAME_OVER starts. `won` is true when `audimat` reached the threshold.
 ## Listen: game over screen.
-signal game_finished(won: bool, total_audimat: int)
+signal game_finished(won: bool, audimat: int)
 
 # --- MUSIC -> UI: COMPOSITION phase. ---
 
@@ -60,8 +60,8 @@ signal step_changed(step: int)
 ## Listen: grid UI, to redraw that cell.
 signal composition_changed(lane: int, step: int, active: bool)
 
-## Fires once when the composition phase ends (timer out or finish_composition_requested), before
-## phase_changed(COMPOSITION_REVIEW). `composition` is a frozen copy: read it, never edit it.
+## Fires once when the composition phase ends (timer out or finish_composition_requested) and
+## triggers phase_changed(COMPOSITION_REVIEW). `composition` is a frozen copy: read it, never edit it.
 ## Listen: UI, if it needs the final grid.
 signal composition_finished(composition: Composition)
 
@@ -83,8 +83,8 @@ signal performance_started(chart: Array, lead_time_sec: float)
 ## Listen: countdown UI ("3, 2, 1, GO").
 signal countdown_beat(beats_left: int)
 
-## PERFORMANCE: fires at the start of each loop of the chart. `line_index` indexes the round's
-## news.anchor_lines, always in range (loops past the last line fire nothing).
+## PERFORMANCE: fires at the start of each loop of the chart. `line_index` indexes the news's
+## anchor_lines, always in range (loops past the last line fire nothing).
 ## Listen: anchor subtitles / speech bubble.
 signal anchor_line_changed(line_index: int)
 
@@ -110,58 +110,60 @@ signal chaos_level_changed(level: float)
 
 # --- MUSIC -> UI: score. ---
 
-## Fires whenever the current round's TV ratings change (0 at the start of the performance).
+## Fires whenever the TV ratings change (0 at the start of the performance).
 ## `audimat` is a viewer count, with no upper bound.
 ## Listen: ratings counter UI.
 signal audimat_changed(audimat: int)
 
-## Fires once at the end of the performance, before phase_changed(RESULTS). `success` is true when
-## `audimat` reached the round threshold.
-## Listen: results screen.
-signal round_finished(success: bool, audimat: int)
+# --- MUSIC internal. ---
 
-# The RoundManager, registered by itself. Typed Node, not RoundManager: round_manager.gd depends on
+## Fires once at the end of the performance with the final audimat, and triggers
+## phase_changed(GAME_OVER).
+## Listen: GameManager only. The UI uses game_finished.
+signal performance_finished(audimat: int)
+
+# The GameManager, registered by itself. Typed Node, not GameManager: game_manager.gd depends on
 # this autoload, so depending back on it would make a cycle.
-var _round_manager: Node
+var _game_manager: Node
 
 
-## Called by the RoundManager only.
-func set_round_manager(manager: Node) -> void:
-	_round_manager = manager
+## Called by the GameManager only.
+func set_game_manager(manager: Node) -> void:
+	_game_manager = manager
 
 
 ## What the player hears right now, in seconds (MusicClock.get_song_time()). Use it for visuals,
 ## e.g. a note is on the hit line when get_song_time() == NoteData.time_sec. Frozen while no music
-## plays; 0.0 when no RoundManager runs.
+## plays; 0.0 when no GameManager runs.
 func get_song_time() -> float:
-	if not is_instance_valid(_round_manager):
+	if not is_instance_valid(_game_manager):
 		return 0.0
-	return _round_manager.get_song_time()
+	return _game_manager.get_song_time()
 
 
-## TITLE when no RoundManager runs.
+## TITLE when no GameManager runs.
 func get_current_phase() -> MusicTypes.Phase:
-	if not is_instance_valid(_round_manager):
+	if not is_instance_valid(_game_manager):
 		return MusicTypes.Phase.TITLE
-	return _round_manager.get_current_phase()
+	return _game_manager.get_current_phase()
 
 
-## The current round's news; null outside a game (TITLE).
+## The game's news, from NEWS_INTRO to GAME_OVER included; null in TITLE.
 func get_current_news() -> NewsData:
-	if not is_instance_valid(_round_manager):
+	if not is_instance_valid(_game_manager):
 		return null
-	return _round_manager.get_current_news()
+	return _game_manager.get_current_news()
 
 
-## The current round's audimat: 0 from round_started, live during the performance, final in RESULTS.
+## The audimat: 0 until the performance, live during it, final in GAME_OVER.
 func get_audimat() -> int:
-	if not is_instance_valid(_round_manager):
+	if not is_instance_valid(_game_manager):
 		return 0
-	return _round_manager.get_audimat()
+	return _game_manager.get_audimat()
 
 
-## The current round's minimum audimat; 0 outside a game.
+## The minimum audimat to win; 0 when no GameManager runs.
 func get_threshold() -> int:
-	if not is_instance_valid(_round_manager):
+	if not is_instance_valid(_game_manager):
 		return 0
-	return _round_manager.get_threshold()
+	return _game_manager.get_threshold()
