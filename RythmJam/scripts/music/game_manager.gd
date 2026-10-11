@@ -82,8 +82,11 @@ func _on_continue_requested() -> void:
 func _on_composition_start_requested() -> void:
 	if not _is_request_valid(MusicTypes.Phase.COMPOSITION, "composition_start_requested"):
 		return
-	# Also a restart mid-composition: empty grid, music and countdown from the top.
-	composition_phase.start(_news, config.composition_duration_sec)
+	# Mid-composition: playhead back to step 0, grid and countdown kept.
+	if composition_phase.is_running():
+		composition_phase.restart_playback()
+	else:
+		composition_phase.start(_news, config.composition_duration_sec)
 
 
 func _on_finish_composition_requested() -> void:

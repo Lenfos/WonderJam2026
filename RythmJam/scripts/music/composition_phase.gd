@@ -11,7 +11,10 @@ extends Node
 @export var sequencer: SequencerPlayer
 
 var _composition: Composition
+var _news: NewsData
 var _running := false
+## Phase time spent before the latest clock (re)start: restart_playback() restarts the clock, not the countdown.
+var _elapsed_before := 0.0
 var _duration: float = 0.0
 var _seconds_left: int = -1
 
@@ -24,12 +27,24 @@ func _ready() -> void:
 func start(news: NewsData, p_duration_sec: float = -1.0) -> void:
 	_duration = p_duration_sec if p_duration_sec > 0.0 else duration_sec
 	_composition = Composition.new()
+	_news = news
+	_elapsed_before = 0.0
 	clock.start(news.backing_track, news.bpm, news.backing_beats)
 	sequencer.start(clock, news, _composition)
 	_running = true
 	_seconds_left = -1
 	MusicBus.composition_started.emit(news, _duration)
 	_update_countdown()
+
+
+## Puts the playhead and the backing track back to step 0. The grid and the countdown carry on.
+## No-op if not running.
+func restart_playback() -> void:
+	if not _running:
+		return
+	_elapsed_before += maxf(clock.get_audio_time(), 0.0)
+	clock.start(_news.backing_track, _news.bpm, _news.backing_beats)
+	sequencer.start(clock, _news, _composition)
 
 
 ## Ends the phase now, as if time ran out. No-op if not running.
@@ -50,7 +65,7 @@ func _process(_delta: float) -> void:
 
 # Clock time, not delta: freezes with the clock on focus loss.
 func _update_countdown() -> void:
-	var left := _duration - maxf(clock.get_audio_time(), 0.0)
+	var left := _duration - _elapsed_before - maxf(clock.get_audio_time(), 0.0)
 	if left <= 0.0:
 		_finish()
 		return

@@ -124,7 +124,7 @@ TITLE
   - `step_changed(step: int)` : la tête de lecture arrive sur la colonne `step`. Surligne-la et éteins la colonne que tu avais surlignée (pas forcément `step - 1` : après un gros ralentissement, un pas peut être sauté).
   - `composition_finished(composition: Composition)` (optionnel) : la grille finale. Copie figée : lis-la, ne la modifie jamais.
 - **À émettre** :
-  - `composition_start_requested()` quand le joueur lance la composition (voir « Démarrage »). Réémis pendant la composition, il la recommence : grille vide, musique et chrono repartent du début (nouveau `composition_started`).
+  - `composition_start_requested()` quand le joueur lance la composition (voir « Démarrage »). Réémis pendant la composition, la tête de lecture et la backing track repartent du pas 0 ; la grille et le chrono continuent (pas de nouveau `composition_started`).
   - `cell_toggle_requested(lane: int, step: int)` au clic sur une case. **Ne change pas la case toi-même** : attends `composition_changed`. (Ignoré sans warning hors de cette phase.)
   - `finish_composition_requested()` au clic sur « J'ai fini ».
   - Pour vider la grille (touche `clear_composition`, C par défaut) : un `cell_toggle_requested` par case allumée, d'après ta copie de la grille (voir plus bas).

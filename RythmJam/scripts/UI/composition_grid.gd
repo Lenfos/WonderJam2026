@@ -14,7 +14,7 @@ extends Control
 @export var playing_column_color := Color(1.0, 0.85, 0.2, 0.45)
 
 @export_group("Keys")
-## Starts the composition; while composing, restarts it (empty grid, bar from the top). Space by default.
+## Starts the composition; while composing, puts the bar back to step 0 (grid and timer kept). Space by default.
 @export var start_action: StringName = &"start_composition"
 ## Clears every note of the grid, the bar keeps going. C by default.
 @export var clear_action: StringName = &"clear_composition"
@@ -96,7 +96,7 @@ func _ready() -> void:
 	MusicBus.composition_time_changed.connect(_on_time_changed)
 	# Key names from the Input Map, so a rebind updates the texts.
 	_start_prompt.text = "PRESS %s TO START" % _key_name(start_action)
-	_keys_label.text = "%s : RESTART      %s : CLEAR" % [_key_name(start_action), _key_name(clear_action)]
+	_keys_label.text = "%s : BAR TO START      %s : CLEAR" % [_key_name(start_action), _key_name(clear_action)]
 	_time_label.visible = false
 	_set_playing(false)
 	_hide_start_prompt()

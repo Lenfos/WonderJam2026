@@ -19,7 +19,8 @@ signal start_game_requested
 signal continue_requested
 ## UI -> MUSIC. COMPOSITION, before the composition runs: the player is ready (start key pressed once
 ## the screen transition is over). Answer: composition_started, then the music and the countdown run.
-## Sent again while composing, it restarts the composition: empty grid, music and countdown from the top.
+## Sent again while composing: the playhead and backing track go back to step 0; the grid and the
+## countdown carry on, no new composition_started.
 signal composition_start_requested
 ## UI -> MUSIC. COMPOSITION: the player clicked "J'ai fini". Answer: composition_finished, then
 ## phase_changed(COMPOSITION_REVIEW) + composition_evaluated.
