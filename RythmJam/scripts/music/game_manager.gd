@@ -32,6 +32,7 @@ func _ready() -> void:
 	MusicBus.start_game_requested.connect(_on_start_game_requested)
 	MusicBus.continue_requested.connect(_on_continue_requested)
 	MusicBus.composition_start_requested.connect(_on_composition_start_requested)
+	MusicBus.performance_start_requested.connect(_on_performance_start_requested)
 	MusicBus.finish_composition_requested.connect(_on_finish_composition_requested)
 	MusicBus.restart_requested.connect(_on_restart_requested)
 	MusicBus.composition_finished.connect(_on_composition_finished)
@@ -74,8 +75,8 @@ func _on_continue_requested() -> void:
 			# The composition itself waits for composition_start_requested.
 			_set_phase(MusicTypes.Phase.COMPOSITION)
 		MusicTypes.Phase.COMPOSITION_REVIEW:
+			# The performance itself waits for performance_start_requested.
 			_set_phase(MusicTypes.Phase.PERFORMANCE)
-			performance_phase.start(_news, _composition, _multiplier)
 		_:
 			_warn_ignored("continue_requested")
 
@@ -88,6 +89,15 @@ func _on_composition_start_requested() -> void:
 		composition_phase.restart_playback()
 	else:
 		composition_phase.start(_news, config.composition_duration_sec)
+
+
+func _on_performance_start_requested() -> void:
+	if not _is_request_valid(MusicTypes.Phase.PERFORMANCE, "performance_start_requested"):
+		return
+	if performance_phase.is_running():
+		_warn_ignored("performance_start_requested")
+		return
+	performance_phase.start(_news, _composition, _multiplier)
 
 
 func _on_finish_composition_requested() -> void:

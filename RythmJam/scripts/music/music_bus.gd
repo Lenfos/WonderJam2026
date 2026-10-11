@@ -22,6 +22,10 @@ signal continue_requested
 ## Sent again while composing: the playhead and backing track go back to step 0; the grid and the
 ## countdown carry on, no new composition_started.
 signal composition_start_requested
+## UI -> MUSIC. PERFORMANCE, before the performance runs: the player is ready (start key pressed once
+## the screen transition is over). Answer: performance_started, then the count-in and the chart run.
+## Ignored once the performance runs.
+signal performance_start_requested
 ## UI -> MUSIC. COMPOSITION: the player clicked "J'ai fini". Answer: composition_finished, then
 ## phase_changed(COMPOSITION_REVIEW) + composition_evaluated.
 signal finish_composition_requested

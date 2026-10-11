@@ -15,6 +15,13 @@
 [ext_resource type="Texture2D" uid="uid://blfhub0psmys4" path="res://assets/kenney_ui-pack/Vector/Yellow/button_round_border.svg" id="12_bo0lo"]
 [ext_resource type="Texture2D" uid="uid://1qmkx8lid4xi" path="res://assets/kenney_ui-pack/Vector/green/button_round_border.svg" id="14_kyjop"]
 [ext_resource type="Texture2D" uid="uid://cncdtly8r4850" path="res://assets/kenney_ui-pack/Vector/Blue/button_round_border.svg" id="15_0uom1"]
+[ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="16_font"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+font = ExtResource("16_font")
+font_size = 40
+outline_size = 12
+outline_color = Color(0.82, 0.1, 0.18, 1)
 
 [node name="Performance" type="Control" unique_id=1131675564 node_paths=PackedStringArray("receptor_rects")]
 layout_mode = 3
@@ -238,3 +245,24 @@ grow_horizontal = 2
 grow_vertical = 0
 pivot_offset = Vector2(35, 35)
 texture = ExtResource("15_0uom1")
+
+[node name="StartPrompt" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -35.0
+offset_right = 400.0
+offset_bottom = 35.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "PRESS SPACE TO START"
+label_settings = SubResource("LabelSettings_prompt")
+horizontal_alignment = 1
+vertical_alignment = 1

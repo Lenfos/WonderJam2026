@@ -88,6 +88,10 @@ func start(news: NewsData, composition: Composition, multiplier: float) -> void:
 	MusicBus.performance_started.emit(chart, clock.get_beat_time(_start_beat) - clock.get_song_time())
 
 
+func is_running() -> bool:
+	return _running
+
+
 func _process(_delta: float) -> void:
 	if not _running:
 		return

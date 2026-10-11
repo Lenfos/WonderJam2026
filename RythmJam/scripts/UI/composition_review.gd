@@ -37,6 +37,18 @@ const STAR_SPIN_DEGREES := -120.0
 ## A blip every this many typed characters (spaces stay silent).
 @export var blip_every_chars := 3
 
+@export_group("Transition")
+## Transition to the performance, same as the start menu's.
+@export var transition_text := "ON AIR..."
+@export var transition_hold := 2.0
+## Empty = the title's font.
+@export var transition_font: Font
+@export var transition_font_size := 56
+@export var transition_font_color := Color.WHITE
+## 0 = no outline.
+@export var transition_outline_size := 0
+@export var transition_outline_color := Color.BLACK
+
 @export_group("Sounds")
 ## Played when the character slides in. Empty = silent.
 @export var whoosh_sfx: AudioStream
@@ -177,7 +189,89 @@ func _start_idle() -> void:
 
 func _on_continue_pressed() -> void:
 	_continue_button.disabled = true
+	_play_transition()
+
+
+# Copy of the start menu's transition: bands cross, the text pops, the performance screen swaps in
+# while everything is covered, then the bands leave.
+func _play_transition() -> void:
+	var vp := get_viewport_rect().size
+	var layer := CanvasLayer.new()
+	layer.layer = 100  # Above everything.
+	# Not a child: phase_changed hides this review, the transition must outlive that.
+	get_tree().root.add_child(layer)
+
+	# Black safety background, so no gap shows between the tilted bands.
+	var black := ColorRect.new()
+	black.color = Color(0, 0, 0, 0)
+	black.size = vp
+	black.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(black)
+
+	# Two tilted bands: red on top (from the left), blue below (from the right).
+	var band_size := Vector2(vp.x * 1.7, vp.y * 0.8)
+	var red := _make_band(Color("#ff2d3d"), band_size, -8.0)
+	var blue := _make_band(Color("#1f0f8f"), band_size, -8.0)
+	layer.add_child(red)
+	layer.add_child(blue)
+
+	var red_target := Vector2(vp.x / 2.0, vp.y * 0.3) - band_size / 2.0
+	var blue_target := Vector2(vp.x / 2.0, vp.y * 0.7) - band_size / 2.0
+	red.position = Vector2(-vp.x * 1.5, red_target.y)
+	blue.position = Vector2(vp.x * 2.0, blue_target.y)
+
+	var label := Label.new()
+	label.text = transition_text
+	label.size = vp
+	label.pivot_offset = vp / 2.0
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var f: Font = transition_font if transition_font else _rate_label.label_settings.font
+	label.add_theme_font_override("font", f)
+	label.add_theme_font_size_override("font_size", transition_font_size)
+	label.add_theme_color_override("font_color", transition_font_color)
+	label.add_theme_constant_override("outline_size", transition_outline_size)
+	label.add_theme_color_override("font_outline_color", transition_outline_color)
+	label.scale = Vector2.ZERO
+	layer.add_child(label)
+
+	# 1) The bands cross.
+	_sfx(_whoosh_player, 1.15)
+	var t := layer.create_tween().set_parallel(true).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	t.tween_property(red, "position:x", red_target.x, 0.5)
+	t.tween_property(blue, "position:x", blue_target.x, 0.5).set_delay(0.08)
+	t.tween_property(black, "color:a", 1.0, 0.4)
+	await t.finished
+
+	# 2) The text pops.
+	var lt := layer.create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	lt.tween_property(label, "scale", Vector2.ONE, 0.3)
+	await lt.finished
+
+	# 3) Screen covered: switch to the performance, then hold.
 	MusicBus.continue_requested.emit()
+	await get_tree().create_timer(transition_hold).timeout
+
+	# 4) Exit: the bands leave the way they came, the text shrinks away.
+	var out := layer.create_tween().set_parallel(true)
+	out.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	out.tween_property(red, "position:x", vp.x * 2.0, 0.5)
+	out.tween_property(blue, "position:x", -vp.x * 1.5, 0.5).set_delay(0.08)
+	out.tween_property(label, "scale", Vector2.ZERO, 0.25)
+	out.tween_property(black, "color:a", 0.0, 0.3).set_delay(0.2)
+	await out.finished
+
+	layer.queue_free()
+
+
+func _make_band(color: Color, band_size: Vector2, angle: float) -> ColorRect:
+	var r := ColorRect.new()
+	r.color = color
+	r.size = band_size
+	r.pivot_offset = band_size / 2.0
+	r.rotation_degrees = angle
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return r
 
 
 func _hide() -> void:

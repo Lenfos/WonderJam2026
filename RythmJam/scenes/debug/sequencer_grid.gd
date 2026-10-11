@@ -2,13 +2,12 @@ extends VBoxContainer
 ## Debug sequencer grid AND reference example for the real UI. Used by sequencer_test.tscn and
 ## placeholder_ui.tscn. Only uses MusicBus signals and the data classes (see docs/CONTRACT.md):
 ## clicks are sent as cell_toggle_requested, the grid is redrawn from composition_changed.
-## Keys: C = clear, R = random fill.
+## Keys: C = clear.
 
 const ACTIVE_COLORS: Array[Color] = [Color.ORANGE_RED, Color.GOLD, Color.DODGER_BLUE, Color.MEDIUM_PURPLE]
 const IDLE_COLOR := Color(0.25, 0.25, 0.25)
 const PLAYHEAD_BOOST := 0.45
 const BEATS_PER_BAR := 4
-const RANDOM_DENSITY := 0.3
 const CELL_SIZE := Vector2(36, 36)
 
 ## The UI's own copy of the grid, kept in sync from composition_changed. Never sent to music code.
@@ -24,7 +23,7 @@ func _ready() -> void:
 	for label in [_headline, _time, _notes]:
 		add_child(label)
 	var help := Label.new()
-	help.text = "C = clear   R = random fill"
+	help.text = "C = clear"
 	add_child(help)
 	for lane in MusicTypes.LANE_COUNT:
 		var row := HBoxContainer.new()
@@ -61,11 +60,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			for lane in MusicTypes.LANE_COUNT:
 				for step in MusicTypes.STEP_COUNT:
 					if _grid.is_active(lane, step):
-						MusicBus.cell_toggle_requested.emit(lane, step)
-		KEY_R:
-			for lane in MusicTypes.LANE_COUNT:
-				for step in MusicTypes.STEP_COUNT:
-					if (randf() < RANDOM_DENSITY) != _grid.is_active(lane, step):
 						MusicBus.cell_toggle_requested.emit(lane, step)
 
 
