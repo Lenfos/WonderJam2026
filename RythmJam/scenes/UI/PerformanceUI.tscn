@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://daabgscgdkyv" path="res://assets/BG_World2.png" id="2_eqf1h"]
 [ext_resource type="Script" uid="uid://cjc6v7j33yoyh" path="res://scripts/crowd.gd" id="4_2wtqo"]
 [ext_resource type="Texture2D" uid="uid://cgpk10dy5r67f" path="res://assets/crowd.png" id="5_eqf1h"]
-[ext_resource type="Texture2D" uid="uid://dvw4u8v2e8e6s" path="res://assets/logo.png" id="5_vtr6l"]
+[ext_resource type="Texture2D" uid="uid://cvg6m8ut51b45" path="res://assets/logo3png.png" id="5_kyjop"]
 [ext_resource type="Texture2D" uid="uid://dtrtgev0rc4cd" path="res://assets/Track2.png" id="6_eqf1h"]
 [ext_resource type="Script" uid="uid://deu4l86clsv6c" path="res://scripts/UI/KeyboardInput.gd" id="7_f4pkf"]
 [ext_resource type="Texture2D" uid="uid://cyccoohg2dg1d" path="res://assets/Keyboard/keyboard_d.svg" id="7_nbnph"]
@@ -78,7 +78,7 @@ custom_minimum_size = Vector2(200, 75)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
-texture = ExtResource("5_vtr6l")
+texture = ExtResource("5_kyjop")
 expand_mode = 1
 
 [node name="TextureRect2" type="TextureRect" parent="MarginContainer/VBoxContainer" unique_id=1853680889]
@@ -246,7 +246,7 @@ grow_vertical = 0
 pivot_offset = Vector2(35, 35)
 texture = ExtResource("15_0uom1")
 
-[node name="StartPrompt" type="Label" parent="."]
+[node name="StartPrompt" type="Label" parent="." unique_id=1355404500]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -261,7 +261,6 @@ offset_right = 400.0
 offset_bottom = 35.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 text = "PRESS SPACE TO START"
 label_settings = SubResource("LabelSettings_prompt")
 horizontal_alignment = 1

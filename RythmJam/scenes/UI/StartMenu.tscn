@@ -10,7 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://26vd2kuft6if" path="res://assets/kenney_ui-pack/Sounds/AXIS1232_25_Defective Detective_Full.ogg" id="4_yarrf"]
 [ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="5_8ljlw"]
 [ext_resource type="Shader" uid="uid://bln83w46ta6ug" path="res://scripts/UI/twinkle2.gdshader" id="5_yarrf"]
-[ext_resource type="Texture2D" uid="uid://dvw4u8v2e8e6s" path="res://assets/logo.png" id="8_wuxu6"]
+[ext_resource type="Texture2D" uid="uid://cvg6m8ut51b45" path="res://assets/logo3png.png" id="8_wuxu6"]
 [ext_resource type="Texture2D" uid="uid://d30ig2u8vvlt4" path="res://assets/kenney_toon-characters/Male person/Vector/Character.png" id="11_3k5yw"]
 [ext_resource type="Texture2D" uid="uid://byx1hpd55uuuq" path="res://assets/dialogue.png" id="12_s5o3k"]
 
