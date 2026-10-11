@@ -9,6 +9,8 @@ const STAR_COUNT := 5
 const MIN_STARS := 1.0
 const MAX_STARS := 5.0
 const STAR_STEP := 0.5
+## Star pop: spins in from this angle.
+const STAR_SPIN_DEGREES := -120.0
 
 @export_group("Stars")
 @export var star_texture: Texture2D
@@ -62,6 +64,17 @@ static func stars_for(quality: float) -> float:
 	return snappedf(lerpf(MIN_STARS, MAX_STARS, clampf(quality, 0.0, 1.0)), STAR_STEP)
 
 
+## Pops `bar` (scale 0, value = its final fill) inside tween `t`: spins and overshoots in gray like an
+## empty star, filling up to its value as it lands.
+static func tween_star_pop(t: Tween, bar: TextureProgressBar, duration: float) -> void:
+	var fill := bar.value
+	bar.value = 0.0
+	bar.rotation_degrees = STAR_SPIN_DEGREES
+	t.tween_property(bar, "scale", Vector2.ONE, duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.parallel().tween_property(bar, "rotation_degrees", 0.0, duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.parallel().tween_property(bar, "value", fill, duration).set_ease(Tween.EASE_IN)
+
+
 func verdict_for(stars: float) -> String:
 	if stars >= high_min_stars:
 		return high_verdict
@@ -88,7 +101,7 @@ func _ready() -> void:
 		bar.custom_minimum_size = star_size
 		bar.pivot_offset = star_size / 2.0
 		bar.max_value = 1.0
-		bar.step = STAR_STEP
+		bar.step = 0.0  # Smooth fill tween; values are already snapped to STAR_STEP.
 		bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_stars.add_child(bar)
 		_star_bars.append(bar)
@@ -129,7 +142,7 @@ func _on_composition_evaluated(quality: float, multiplier: float, _comments: Pac
 	t.tween_property(_bubble, "scale", Vector2.ONE, bubble_pop_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_tween_typewriter(t, _rate_label)
 	for bar in _star_bars:
-		t.tween_property(bar, "scale", Vector2.ONE, star_pop_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tween_star_pop(t, bar, star_pop_duration)
 	_tween_typewriter(t, _verdict_label)
 	t.tween_property(_multiplier_label, "modulate:a", 1.0, 0.2)
 	t.tween_property(_continue_button, "scale", Vector2.ONE, 0.6).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)

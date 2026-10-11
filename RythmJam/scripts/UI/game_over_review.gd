@@ -75,7 +75,7 @@ func _ready() -> void:
 			bar.custom_minimum_size = star_size
 			bar.pivot_offset = star_size / 2.0
 			bar.max_value = 1.0
-			bar.step = CompositionReview.STAR_STEP
+			bar.step = 0.0  # Smooth fill tween; values are already snapped to STAR_STEP.
 			bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			row.add_child(bar)
 			_bars.append(bar)
@@ -123,7 +123,7 @@ func _on_game_finished(audimat: int) -> void:
 	t.parallel().tween_property(_character, "position:x", char_home_x, 0.7).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	for bar in _bars:
 		t.tween_callback(_sfx.bind(_blip_player, randf_range(0.9, 1.15)))
-		t.tween_property(bar, "scale", Vector2.ONE, star_pop_duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		CompositionReview.tween_star_pop(t, bar, star_pop_duration)
 	t.tween_method(_show_viewers, 0, audimat * viewers_per_point, count_up_duration).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 	t.tween_property(_verdict_label, "modulate:a", 1.0, 0.25)
 	t.tween_property(_menu_button, "scale", Vector2.ONE, 0.6).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
