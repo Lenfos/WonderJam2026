@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://dc5bo8uvdl1t4"]
 
-[ext_resource type="Texture2D" uid="uid://rfbemmdko6qo" path="res://assets/BG_World.png" id="1_opy05"]
-[ext_resource type="Texture2D" uid="uid://dyobiu1onmxdo" path="res://assets/BreakingNewsText.png" id="2_07tym"]
-[ext_resource type="Texture2D" uid="uid://gahx521lia8d" path="res://assets/Track.svg" id="3_x3k1d"]
+[ext_resource type="Texture2D" uid="uid://rfbemmdko6qo" path="res://assets/BG_World.png" id="1_2wrkg"]
+[ext_resource type="Texture2D" uid="uid://dyobiu1onmxdo" path="res://assets/BreakingNewsText.png" id="2_32pbn"]
+[ext_resource type="Texture2D" uid="uid://gahx521lia8d" path="res://assets/Track.svg" id="3_2wtqo"]
 
-[node name="Control" type="Control" unique_id=1131675564]
+[node name="Performance" type="Control" unique_id=1131675564]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,7 +17,7 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0017362
 anchor_bottom = 1.0015432
-texture = ExtResource("1_opy05")
+texture = ExtResource("1_2wrkg")
 expand_mode = 3
 metadata/_edit_use_anchors_ = true
 
@@ -43,7 +43,7 @@ custom_minimum_size = Vector2(200, 75)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
-texture = ExtResource("2_07tym")
+texture = ExtResource("2_32pbn")
 expand_mode = 1
 
 [node name="TextureRect2" type="TextureRect" parent="MarginContainer/VBoxContainer" unique_id=1853680889]
@@ -51,5 +51,5 @@ custom_minimum_size = Vector2(450, 500)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
-texture = ExtResource("3_x3k1d")
+texture = ExtResource("3_2wtqo")
 expand_mode = 1

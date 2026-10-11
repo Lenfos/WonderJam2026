@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://go7n540iuvar"]
 
-[ext_resource type="Script" uid="uid://nehmq5l1cb6j" path="res://scripts/buttons_manager.gd" id="1_0wfyh"]
+[ext_resource type="Script" uid="uid://nehmq5l1cb6j" path="res://scripts/buttons_manager.gd" id="1_uqtct"]
 
 [sub_resource type="Curve2D" id="Curve2D_uvfqa"]
 _data = {
@@ -26,8 +26,8 @@ _data = {
 }
 point_count = 2
 
-[node name="PerformanceScreen" type="Node2D" unique_id=941835878 node_paths=PackedStringArray("lanes", "playfield")]
-script = ExtResource("1_0wfyh")
+[node name="PerformanceLogic" type="Node2D" unique_id=941835878 node_paths=PackedStringArray("lanes", "playfield")]
+script = ExtResource("1_uqtct")
 lanes = [NodePath("Playfield/Path1"), NodePath("Playfield/Path2"), NodePath("Playfield/Path3"), NodePath("Playfield/Path4")]
 playfield = NodePath("Playfield")
 

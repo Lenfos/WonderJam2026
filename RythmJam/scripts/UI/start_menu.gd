@@ -7,8 +7,17 @@ extends Control
 @export var music: AudioStream
 @export_file("*.tscn") var game_scene: String = "res://scenes/game.tscn"
 @export var slide_distance := 0.0
+@export var transition_hold := 2.0
 @export var char_delay := 0.03      # secondes entre deux lettres (plus petit = plus rapide)
 @export var newline_pause := 0.5    # pause à chaque retour à la ligne
+
+@export_group("Transition")
+@export var transition_text := "EN DIRECT..."
+@export var transition_font: Font                       # laisse vide = police du dialogue
+@export var transition_font_size := 56
+@export var transition_font_color := Color.WHITE
+@export var transition_outline_size := 0                # 0 = pas de contour
+@export var transition_outline_color := Color.BLACK
 
 @onready var bg: TextureRect = $TextureRect
 @onready var menu_content: Control = $TextureRect/StartMenu
@@ -29,6 +38,7 @@ var _logo_tweens: Array[Tween] = []
 var _menu_home: Vector2
 var _news_home: Vector2
 var _char_home: Vector2
+@warning_ignore("unused_private_class_variable")
 var _last_char := 0
 
 var _fade: ColorRect
@@ -212,6 +222,8 @@ func _on_play() -> void:
 		b.set_meta("ready", false)
 		b.focus_mode = Control.FOCUS_NONE
 	_sfx(_click_player)
+	
+	MusicBus.phase_changed.emit(MusicTypes.Phase.NEWS_INTRO)
 
 	# Distance = écart entre le menu et News (News doit être pile à droite du menu)
 	var dist := slide_distance if slide_distance > 0.0 else _news_home.x - _menu_home.x
@@ -313,11 +325,92 @@ func _on_start() -> void:
 	start_button.set_meta("ready", false)
 	_sfx(_click_player)
 	_shake(character)
-	var t := create_tween().set_parallel(true)
-	t.tween_property(_fade, "color:a", 1.0, 0.5).set_delay(0.2)
-	t.tween_property(_music_player, "volume_db", -80.0, 0.7)
+	create_tween().tween_property(_music_player, "volume_db", -80.0, 1.0)
+	await get_tree().create_timer(0.25).timeout
+	await _play_transition()
+
+
+func _play_transition() -> void:
+	var vp := get_viewport_rect().size
+	var layer := CanvasLayer.new()
+	layer.layer = 100  # au-dessus de tout
+	add_child(layer)
+
+	# Fond noir de sécurité (évite de voir des trous entre les bandes inclinées)
+	var black := ColorRect.new()
+	black.color = Color(0, 0, 0, 0)
+	black.size = vp
+	black.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(black)
+
+	# Deux bandes inclinées : rouge en haut (vient de la gauche), bleue en bas (vient de la droite)
+	var band_size := Vector2(vp.x * 1.7, vp.y * 0.8)
+	var red := _make_band(Color("#ff2d3d"), band_size, -8.0)
+	var blue := _make_band(Color("#1f0f8f"), band_size, -8.0)
+	layer.add_child(red)
+	layer.add_child(blue)
+
+	var red_target := Vector2(vp.x / 2.0, vp.y * 0.3) - band_size / 2.0
+	var blue_target := Vector2(vp.x / 2.0, vp.y * 0.7) - band_size / 2.0
+	red.position = Vector2(-vp.x * 1.5, red_target.y)
+	blue.position = Vector2(vp.x * 2.0, blue_target.y)
+
+	# Texte au centre (réutilise la police de ton dialogue)
+	var label := Label.new()
+	label.text = transition_text
+	label.size = vp
+	label.pivot_offset = vp / 2.0
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	var f: Font = transition_font if transition_font else dialogue_label.get_theme_font("font")
+	label.add_theme_font_override("font", f)
+	label.add_theme_font_size_override("font_size", transition_font_size)
+	label.add_theme_color_override("font_color", transition_font_color)
+	label.add_theme_constant_override("outline_size", transition_outline_size)
+	label.add_theme_color_override("font_outline_color", transition_outline_color)
+	label.scale = Vector2.ZERO
+	layer.add_child(label)
+
+	# 1) Les bandes se croisent
+	_sfx(_whoosh_player, 1.15)
+	var t := create_tween().set_parallel(true).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	t.tween_property(red, "position:x", red_target.x, 0.5)
+	t.tween_property(blue, "position:x", blue_target.x, 0.5).set_delay(0.08)
+	t.tween_property(black, "color:a", 1.0, 0.4)
 	await t.finished
-	get_tree().change_scene_to_file(game_scene)
+
+	# 2) Le texte pop
+	var lt := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	lt.tween_property(label, "scale", Vector2.ONE, 0.3)
+	await lt.finished
+
+	# 3) Écran couvert : c'est ici qu'on change d'écran, puis on attend
+	_on_covered()
+	await get_tree().create_timer(transition_hold).timeout
+
+	# 4) Sortie : les bandes repartent dans leur sens, le texte disparaît
+	var out := create_tween().set_parallel(true)
+	out.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	out.tween_property(red, "position:x", vp.x * 2.0, 0.5)
+	out.tween_property(blue, "position:x", -vp.x * 1.5, 0.5).set_delay(0.08)
+	out.tween_property(label, "scale", Vector2.ZERO, 0.25)
+	out.tween_property(black, "color:a", 0.0, 0.3).set_delay(0.2)
+	await out.finished
+
+	layer.queue_free()
+
+
+func _make_band(color: Color, band_size: Vector2, angle: float) -> ColorRect:
+	var r := ColorRect.new()
+	r.color = color
+	r.size = band_size
+	r.pivot_offset = band_size / 2.0
+	r.rotation_degrees = angle
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return r
+
+func _on_covered() -> void:
+		MusicBus.phase_changed.emit(MusicTypes.Phase.COMPOSITION)
 
 
 func _shake(node: Control, strength := 6.0, duration := 0.2) -> void:
