@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://dcmpaf8v5uey4" path="res://assets/Icons/trumpet.png" id="6_xk72c"]
 [ext_resource type="Texture2D" uid="uid://bkk1sa1txa2oj" path="res://assets/Icons/bell.png" id="7_13bgc"]
 [ext_resource type="Texture2D" uid="uid://br6nl1o7462qj" path="res://assets/Icons/kick.svg" id="7_kick"]
+[ext_resource type="AudioStream" uid="uid://bm7qgegaxn8d6" path="res://assets/kenney_ui-pack/Sounds/drop_001.ogg" id="8_6jdeg"]
+[ext_resource type="AudioStream" uid="uid://dtuqcalmqyide" path="res://assets/kenney_ui-pack/Sounds/click-b.ogg" id="9_egk4l"]
 [ext_resource type="Texture2D" uid="uid://dgiwh3anernms" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_depth_flat.svg" id="11_13bgc"]
 [ext_resource type="Texture2D" uid="uid://d11gulejpvcij" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_flat.svg" id="12_deqow"]
 [ext_resource type="Script" uid="uid://c85nu6exul0cc" path="res://scripts/UI/composition_review.gd" id="13_review"]
@@ -40,11 +42,9 @@ _data = {
 &"rotate": SubResource("Animation_rotate")
 }
 
-[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+[sub_resource type="LabelSettings" id="LabelSettings_3verf"]
 font = ExtResource("6_font")
-font_size = 40
-outline_size = 12
-outline_color = Color(0.82, 0.1, 0.18, 1)
+font_size = 30
 
 [sub_resource type="LabelSettings" id="LabelSettings_time"]
 font = ExtResource("6_font")
@@ -55,9 +55,11 @@ font = ExtResource("6_font")
 font_size = 18
 font_color = Color(1, 1, 1, 0.85)
 
-[sub_resource type="LabelSettings" id="LabelSettings_3verf"]
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
 font = ExtResource("6_font")
-font_size = 30
+font_size = 40
+outline_size = 12
+outline_color = Color(0.82, 0.1, 0.18, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_bubble"]
 font = ExtResource("6_font")
@@ -89,6 +91,8 @@ script = ExtResource("2_grid")
 cell_texture = ExtResource("4_cell")
 active_cell_texture = ExtResource("5_cell_on")
 lane_icons = Array[Texture2D]([ExtResource("7_kick"), ExtResource("5_yba4s"), ExtResource("6_xk72c"), ExtResource("7_13bgc")])
+hover_sfx = ExtResource("8_6jdeg")
+click_sfx = ExtResource("9_egk4l")
 
 [node name="Background" type="ColorRect" parent="." unique_id=788106071]
 layout_mode = 1
@@ -217,7 +221,6 @@ offset_left = 640.0
 offset_top = 59.0
 offset_right = 800.0
 offset_bottom = 123.0
-mouse_filter = 2
 text = "0:45"
 label_settings = SubResource("LabelSettings_time")
 horizontal_alignment = 2
@@ -231,7 +234,6 @@ anchor_left = 0.0505
 anchor_top = 0.86
 anchor_right = 0.9495
 anchor_bottom = 0.92
-mouse_filter = 2
 text = "SPACE : BAR TO START      C : CLEAR"
 label_settings = SubResource("LabelSettings_keys")
 horizontal_alignment = 1
@@ -252,7 +254,6 @@ offset_right = 400.0
 offset_bottom = 80.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 text = "PRESS SPACE TO START"
 label_settings = SubResource("LabelSettings_prompt")
 horizontal_alignment = 1
@@ -268,6 +269,8 @@ grow_vertical = 2
 script = ExtResource("13_review")
 star_texture = ExtResource("14_star")
 blip_sfx = ExtResource("17_blip")
+hover_sfx = ExtResource("8_6jdeg")
+click_sfx = ExtResource("9_egk4l")
 
 [node name="Character" type="TextureRect" parent="Review" unique_id=1730412689]
 layout_mode = 0

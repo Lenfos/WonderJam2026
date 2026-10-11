@@ -1,10 +1,12 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b020r1nu0mh7q"]
 
-[ext_resource type="Script" path="res://scripts/UI/game_over_review.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://duribvnuqxj30" path="res://scripts/UI/game_over_review.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://njsdkibv0slm" path="res://assets/Bg_Menu.png" id="2_bg"]
 [ext_resource type="Shader" uid="uid://bln83w46ta6ug" path="res://scripts/UI/twinkle2.gdshader" id="3_twinkle"]
+[ext_resource type="AudioStream" uid="uid://bm7qgegaxn8d6" path="res://assets/kenney_ui-pack/Sounds/drop_001.ogg" id="4_lqh34"]
 [ext_resource type="Texture2D" uid="uid://bfe4igs8ocdtc" path="res://assets/star.png" id="4_star"]
 [ext_resource type="Texture2D" uid="uid://d30ig2u8vvlt4" path="res://assets/kenney_toon-characters/Male person/Vector/Character.png" id="5_character"]
+[ext_resource type="AudioStream" uid="uid://dtuqcalmqyide" path="res://assets/kenney_ui-pack/Sounds/click-b.ogg" id="5_j81u2"]
 [ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="6_font"]
 [ext_resource type="Texture2D" uid="uid://dgiwh3anernms" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_depth_flat.svg" id="7_button"]
 [ext_resource type="Texture2D" uid="uid://d11gulejpvcij" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_flat.svg" id="8_button_pressed"]
@@ -72,7 +74,7 @@ font_color = Color(0, 0, 0, 1)
 font = ExtResource("6_font")
 font_size = 24
 
-[node name="GameOverReview" type="Control"]
+[node name="GameOverReview" type="Control" unique_id=662882881]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -82,8 +84,11 @@ grow_vertical = 2
 script = ExtResource("1_script")
 star_texture = ExtResource("4_star")
 blip_sfx = ExtResource("9_blip")
+hover_sfx = ExtResource("4_lqh34")
+click_sfx = ExtResource("5_j81u2")
+tick_sfx = ExtResource("9_blip")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=751939499]
 material = SubResource("ShaderMaterial_twinkle")
 layout_mode = 1
 anchors_preset = 15
@@ -94,7 +99,7 @@ grow_vertical = 2
 texture = ExtResource("2_bg")
 expand_mode = 1
 
-[node name="Character" type="TextureRect" parent="."]
+[node name="Character" type="TextureRect" parent="." unique_id=585513397]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 3
@@ -113,7 +118,7 @@ texture = ExtResource("5_character")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="Panel" type="PanelContainer" parent="." unique_id=1435745203]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 111.0
@@ -122,77 +127,77 @@ offset_right = 732.0
 offset_bottom = 525.0
 theme_override_styles/panel = SubResource("StyleBox_rim")
 
-[node name="Card" type="PanelContainer" parent="Panel"]
+[node name="Card" type="PanelContainer" parent="Panel" unique_id=874825209]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_card")
 
-[node name="Content" type="VBoxContainer" parent="Panel/Card"]
+[node name="Content" type="VBoxContainer" parent="Panel/Card" unique_id=415343842]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Panel/Card/Content"]
+[node name="Title" type="Label" parent="Panel/Card/Content" unique_id=303962856]
 layout_mode = 2
 text = "REVIEW"
 label_settings = SubResource("LabelSettings_title")
 
-[node name="Rows" type="GridContainer" parent="Panel/Card/Content"]
+[node name="Rows" type="GridContainer" parent="Panel/Card/Content" unique_id=1307147118]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_constants/h_separation = 30
 theme_override_constants/v_separation = 8
 columns = 2
 
-[node name="CompositionLabel" type="Label" parent="Panel/Card/Content/Rows"]
+[node name="CompositionLabel" type="Label" parent="Panel/Card/Content/Rows" unique_id=1477042551]
 layout_mode = 2
 text = "COMPOSITION"
 label_settings = SubResource("LabelSettings_row")
 vertical_alignment = 1
 
-[node name="CompositionStars" type="HBoxContainer" parent="Panel/Card/Content/Rows"]
+[node name="CompositionStars" type="HBoxContainer" parent="Panel/Card/Content/Rows" unique_id=2113239155]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="PerformanceLabel" type="Label" parent="Panel/Card/Content/Rows"]
+[node name="PerformanceLabel" type="Label" parent="Panel/Card/Content/Rows" unique_id=2098046318]
 layout_mode = 2
 text = "PERFORMANCE"
 label_settings = SubResource("LabelSettings_row")
 vertical_alignment = 1
 
-[node name="PerformanceStars" type="HBoxContainer" parent="Panel/Card/Content/Rows"]
+[node name="PerformanceStars" type="HBoxContainer" parent="Panel/Card/Content/Rows" unique_id=1957090783]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="TotalLabel" type="Label" parent="Panel/Card/Content/Rows"]
+[node name="TotalLabel" type="Label" parent="Panel/Card/Content/Rows" unique_id=1296302307]
 layout_mode = 2
 text = "TOTAL"
 label_settings = SubResource("LabelSettings_row")
 vertical_alignment = 1
 
-[node name="TotalStars" type="HBoxContainer" parent="Panel/Card/Content/Rows"]
+[node name="TotalStars" type="HBoxContainer" parent="Panel/Card/Content/Rows" unique_id=1120812600]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="AudienceLabel" type="Label" parent="Panel/Card/Content/Rows"]
+[node name="AudienceLabel" type="Label" parent="Panel/Card/Content/Rows" unique_id=983364157]
 layout_mode = 2
 text = "AUDIENCE"
 label_settings = SubResource("LabelSettings_row")
 vertical_alignment = 1
 
-[node name="ViewersLabel" type="Label" parent="Panel/Card/Content/Rows"]
+[node name="ViewersLabel" type="Label" parent="Panel/Card/Content/Rows" unique_id=141939813]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0 VIEWERS"
 label_settings = SubResource("LabelSettings_viewers")
 vertical_alignment = 1
 
-[node name="Footer" type="HBoxContainer" parent="Panel/Card/Content"]
+[node name="Footer" type="HBoxContainer" parent="Panel/Card/Content" unique_id=883127669]
 layout_mode = 2
 theme_override_constants/separation = 24
 
-[node name="VerdictLabel" type="Label" parent="Panel/Card/Content/Footer"]
+[node name="VerdictLabel" type="Label" parent="Panel/Card/Content/Footer" unique_id=2137971010]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -202,7 +207,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="MenuButton" type="TextureButton" parent="Panel/Card/Content/Footer"]
+[node name="MenuButton" type="TextureButton" parent="Panel/Card/Content/Footer" unique_id=451947108]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 48)
 layout_mode = 2
@@ -211,7 +216,7 @@ texture_pressed = ExtResource("8_button_pressed")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="Label" type="Label" parent="Panel/Card/Content/Footer/MenuButton"]
+[node name="Label" type="Label" parent="Panel/Card/Content/Footer/MenuButton" unique_id=1610959723]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
