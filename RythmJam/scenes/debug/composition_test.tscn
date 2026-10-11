@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/debug/sequencer_test.gd" id="1"]
+[ext_resource type="Script" uid="uid://fo6ecfnl1tin" path="res://scripts/music/composition_phase.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://cgf5fgttxh3up" path="res://scenes/UI/Composition.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/music/music_clock.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/music/sequencer_player.gd" id="5"]
+
+[node name="CompositionTest" type="Node"]
+script = ExtResource("1")
+autostart = true
+
+[node name="Composition" parent="." instance=ExtResource("3")]
+
+[node name="MusicClock" type="Node" parent="."]
+script = ExtResource("4")
+
+[node name="SequencerPlayer" type="Node" parent="."]
+script = ExtResource("5")
+
+[node name="CompositionPhase" type="Node" parent="." node_paths=PackedStringArray("clock", "sequencer")]
+script = ExtResource("2")
+clock = NodePath("../MusicClock")
+sequencer = NodePath("../SequencerPlayer")

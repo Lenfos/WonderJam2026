@@ -1,0 +1,172 @@
+[gd_scene format=3 uid="uid://cgf5fgttxh3up"]
+
+[ext_resource type="Texture2D" uid="uid://dco50bx637etd" path="res://assets/Effect.png" id="1_effect"]
+[ext_resource type="Script" uid="uid://c5phm62ouw4cx" path="res://scripts/UI/composition_grid.gd" id="2_grid"]
+[ext_resource type="Texture2D" uid="uid://dmmkjb5y0m676" path="res://assets/ComposeBG.png" id="3_panel"]
+[ext_resource type="Texture2D" uid="uid://bjd5eg1x46ue3" path="res://assets/ComposeCell.png" id="4_cell"]
+[ext_resource type="Texture2D" uid="uid://dgtbunnwmetf6" path="res://assets/ComposeCellActive.png" id="5_cell_on"]
+[ext_resource type="Texture2D" uid="uid://ba66hiwqt7art" path="res://assets/Icons/drum.png" id="5_yba4s"]
+[ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="6_font"]
+[ext_resource type="Texture2D" uid="uid://dcmpaf8v5uey4" path="res://assets/Icons/trumpet.png" id="6_xk72c"]
+[ext_resource type="Texture2D" uid="uid://bkk1sa1txa2oj" path="res://assets/Icons/bell.png" id="7_13bgc"]
+[ext_resource type="Texture2D" uid="uid://br6nl1o7462qj" path="res://assets/Icons/kick.svg" id="7_kick"]
+[ext_resource type="Texture2D" uid="uid://dgiwh3anernms" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_depth_flat.svg" id="11_13bgc"]
+[ext_resource type="Texture2D" uid="uid://d11gulejpvcij" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_flat.svg" id="12_deqow"]
+
+[sub_resource type="Animation" id="Animation_rotate"]
+resource_name = "rotate"
+length = 30.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Rays:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 30),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.2831855]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bg"]
+_data = {
+&"rotate": SubResource("Animation_rotate")
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_3verf"]
+font = ExtResource("6_font")
+font_size = 30
+
+[node name="Composition" type="Control" unique_id=78823517]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_grid")
+cell_texture = ExtResource("4_cell")
+active_cell_texture = ExtResource("5_cell_on")
+lane_icons = Array[Texture2D]([ExtResource("7_kick"), ExtResource("5_yba4s"), ExtResource("6_xk72c"), ExtResource("7_13bgc")])
+
+[node name="Background" type="ColorRect" parent="." unique_id=788106071]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.18370515, 0.26136744, 0.57412606, 1)
+
+[node name="Rays" type="TextureRect" parent="." unique_id=1919378089]
+modulate = Color(1, 1, 1, 0.25)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -720.0
+offset_top = -720.0
+offset_right = 720.0
+offset_bottom = 720.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+mouse_filter = 2
+texture = ExtResource("1_effect")
+expand_mode = 1
+
+[node name="BackgroundAnimation" type="AnimationPlayer" parent="." unique_id=598227759]
+libraries/ = SubResource("AnimationLibrary_bg")
+autoplay = &"rotate"
+
+[node name="Title" type="Label" parent="." unique_id=946119205]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 55.0
+offset_right = 640.0
+offset_bottom = 105.0
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 36
+text = "COMPOSE YOUR MUSIC"
+
+[node name="Panel" type="TextureRect" parent="." unique_id=1343151058]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0505
+anchor_top = 0.298
+anchor_right = 0.9495
+anchor_bottom = 0.848
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_panel")
+expand_mode = 1
+
+[node name="GridArea" type="AspectRatioContainer" parent="Panel" unique_id=1998278675]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.035
+anchor_top = 0.113
+anchor_right = 0.965
+anchor_bottom = 0.887
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 4.7
+
+[node name="Bars" type="Control" parent="Panel/GridArea" unique_id=1305496626]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Grid" type="GridContainer" parent="Panel/GridArea" unique_id=641060669]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 21
+
+[node name="PlayingColumn" type="Control" parent="Panel/GridArea" unique_id=163034654]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Playhead" type="ColorRect" parent="Panel" unique_id=914496230]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.03
+anchor_bottom = 0.97
+offset_right = 3.0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="finishedButton" type="TextureButton" parent="." unique_id=423869240]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 816.0
+offset_top = 59.0
+offset_right = 1008.0
+offset_bottom = 123.0
+texture_normal = ExtResource("11_13bgc")
+texture_pressed = ExtResource("12_deqow")
+
+[node name="Label" type="Label" parent="finishedButton" unique_id=571296217]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -27.0
+offset_top = -11.5
+offset_right = 27.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "FINISHED"
+label_settings = SubResource("LabelSettings_3verf")

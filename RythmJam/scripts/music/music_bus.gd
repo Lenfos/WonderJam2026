@@ -161,4 +161,3 @@ func get_audimat() -> int:
 	if not is_instance_valid(_game_manager):
 		return 0
 	return _game_manager.get_audimat()
-
