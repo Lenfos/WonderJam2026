@@ -75,7 +75,10 @@ layout_mode = 1
 z_index = -2
 layout_mode = 1
 
+[node name="CanvasLayerNote" type="CanvasLayer" parent="UIRoot" unique_id=201588237]
+layer = 2
+
+[node name="PerformanceLogic" parent="UIRoot/CanvasLayerNote" unique_id=941835878 instance=ExtResource("11_ya4ey")]
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2034373341]
 position = Vector2(577, 324)
-
-[node name="PerformanceLogic" parent="." unique_id=941835878 instance=ExtResource("11_ya4ey")]

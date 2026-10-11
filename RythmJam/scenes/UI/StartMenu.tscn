@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://njsdkibv0slm" path="res://assets/Bg_Menu.png" id="1_g18el"]
 [ext_resource type="Script" uid="uid://c16p8pe1fvnm3" path="res://scripts/UI/start_menu.gd" id="1_w2bo1"]
 [ext_resource type="AudioStream" uid="uid://bm7qgegaxn8d6" path="res://assets/kenney_ui-pack/Sounds/drop_001.ogg" id="2_i35m3"]
-[ext_resource type="Texture2D" uid="uid://dyobiu1onmxdo" path="res://assets/BreakingNewsText.png" id="2_yi547"]
 [ext_resource type="Texture2D" uid="uid://dgiwh3anernms" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_depth_flat.svg" id="3_8os0l"]
 [ext_resource type="AudioStream" uid="uid://dtuqcalmqyide" path="res://assets/kenney_ui-pack/Sounds/click-b.ogg" id="3_yarrf"]
 [ext_resource type="Texture2D" uid="uid://d11gulejpvcij" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_flat.svg" id="4_w2bo1"]
@@ -11,6 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://26vd2kuft6if" path="res://assets/kenney_ui-pack/Sounds/AXIS1232_25_Defective Detective_Full.ogg" id="4_yarrf"]
 [ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="5_8ljlw"]
 [ext_resource type="Shader" uid="uid://bln83w46ta6ug" path="res://scripts/UI/twinkle2.gdshader" id="5_yarrf"]
+[ext_resource type="Texture2D" uid="uid://dvw4u8v2e8e6s" path="res://assets/logo.png" id="8_wuxu6"]
 [ext_resource type="Texture2D" uid="uid://d30ig2u8vvlt4" path="res://assets/kenney_toon-characters/Male person/Vector/Character.png" id="11_3k5yw"]
 [ext_resource type="Texture2D" uid="uid://byx1hpd55uuuq" path="res://assets/dialogue.png" id="12_s5o3k"]
 
@@ -83,7 +83,7 @@ offset_top = 37.0
 offset_right = 331.0
 offset_bottom = 137.0
 offset_transform_enabled = true
-texture = ExtResource("2_yi547")
+texture = ExtResource("8_wuxu6")
 expand_mode = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="TextureRect/StartMenu" unique_id=449897231]

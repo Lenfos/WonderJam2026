@@ -8,13 +8,19 @@ extends Node2D
 ##   │   ├── Lane0 (Path2D) ... Lane3
 ##   └── HitMarkers          <- 4 Marker2D à l'endroit de la ligne de frappe de chaque lane
 
-const NOTE_SCENE := preload("res://scenes/note1.tscn")
+const NOTE_SCENE_1 := preload("res://scenes/note1.tscn")
+const NOTE_SCENE_2 := preload("res://scenes/note_2.tscn")
+const NOTE_SCENE_3 := preload("res://scenes/note_3.tscn")
+const NOTE_SCENE_4 := preload("res://scenes/note_4.tscn")
+
 
 @export var lanes: Array[Path2D] = []             # 4 Path2D : KICK, SNARE, BRASS, BELLS
 @export var hit_markers: Array[Node2D] = []       # 4 positions de ligne de frappe (popups)
 @export var receptors: Array[CanvasItem] = []     # optionnel : 4 sprites qui s'allument à l'appui
 @export var playfield: Node2D                     # optionnel : nœud à secouer
 @export var travel_time := 2.0
+
+@onready var performance: Control = $"../../CanvasLayer/GameUi/Performance"
 
 # Jugement -> [texte, couleur]
 const JUDGMENT_STYLE := {
@@ -50,7 +56,13 @@ func _process(_delta: float) -> void:
 func _on_performance_started(chart: Array, _lead_time_sec: float) -> void:
 	_clear_notes()
 	for data: NoteData in chart:
-		var note: Note = NOTE_SCENE.instantiate()
+		var note: Note
+		match data.lane:
+			0: note = NOTE_SCENE_1.instantiate()
+			1: note = NOTE_SCENE_2.instantiate()
+			2: note = NOTE_SCENE_3.instantiate()
+			3: note = NOTE_SCENE_4.instantiate()
+
 		note.hit_time = data.time_sec
 		note.travel_time = travel_time
 		lanes[data.lane].add_child(note)
@@ -64,7 +76,10 @@ func _on_note_hit(index: int, lane: int, judgment: MusicTypes.Judgment) -> void:
 		_notes.erase(index)
 	_show_judgment(judgment, lane)
 	if judgment == MusicTypes.Judgment.PERFECT:
+		performance.addScore(100)
 		_shake(2.0, 0.1)   # micro-shake, optionnel
+	elif judgment == MusicTypes.Judgment.GOOD:
+		performance.addScore(50)
 
 
 func _on_note_missed(index: int, lane: int) -> void:
@@ -73,6 +88,7 @@ func _on_note_missed(index: int, lane: int) -> void:
 		_notes.erase(index)
 	_show_judgment(MusicTypes.Judgment.MISS, lane)
 	_shake(lerpf(6.0, 14.0, _chaos), 0.2)   # plus le chaos monte, plus ça secoue
+	performance.addScore(-70)
 
 
 func _on_phase_changed(phase: MusicTypes.Phase) -> void:

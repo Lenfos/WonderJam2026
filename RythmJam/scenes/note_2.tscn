@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://b8fqiigucxbha"]
+
+[ext_resource type="Script" uid="uid://yvfoa8y58tws" path="res://scripts/note.gd" id="1_xsgs2"]
+[ext_resource type="Texture2D" uid="uid://b5d2850if6g4b" path="res://assets/kenney_ui-pack/Vector/Red/button_round_depth_flat.svg" id="2_xsgs2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uvfqa"]
+radius = 31.400637
+
+[node name="Note2" type="PathFollow2D" unique_id=280183401]
+script = ExtResource("1_xsgs2")
+ratio_at_hit = 0.7
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=388796239]
+rotation = -1.5707964
+texture = ExtResource("2_xsgs2")
+
+[node name="Area2D" type="Area2D" parent="Sprite2D" unique_id=2006667322]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/Area2D" unique_id=1941924619]
+shape = SubResource("CircleShape2D_uvfqa")

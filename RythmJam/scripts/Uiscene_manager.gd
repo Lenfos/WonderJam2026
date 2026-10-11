@@ -5,7 +5,7 @@ extends Control
 
 @onready var performance: Control = $Performance
 @onready var composition: Control = $Composition
-@onready var performance_logic: Node2D = $"../../../PerformanceLogic"
+@onready var performance_logic: Node2D = $"../../CanvasLayerNote/PerformanceLogic"
 @onready var performance_phase: PerformancePhase = $"../../../MusicSystem/PerformancePhase"
 
 @onready var composition_phase: CompositionPhase = $"../../../MusicSystem/CompositionPhase"
@@ -32,7 +32,7 @@ func _on_phase_changed(phase: MusicTypes.Phase) -> void:
 		MusicTypes.Phase.PERFORMANCE:
 			print("Performance start")
 			composition.visible = false
-			performance.visible = false
+			performance.visible = true
 			performance_logic.visible = true
 		MusicTypes.Phase.GAME_OVER:
 			pass
