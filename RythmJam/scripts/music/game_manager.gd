@@ -14,8 +14,9 @@ extends Node
 var _phase := MusicTypes.Phase.TITLE
 ## The game's news, from NEWS_INTRO to GAME_OVER; null in TITLE.
 var _news: NewsData
-## News of the latest game, kept across restarts so the next draw picks another one.
-var _last_news: NewsData
+## News of the latest game, kept across restarts (static: survives the scene reload done by the
+## game over MENU button) so the next draw picks another one.
+static var _last_news: NewsData
 var _composition: Composition
 var _multiplier := 1.0
 ## Mirrored from MusicBus.audimat_changed, final from performance_finished.

@@ -35,4 +35,5 @@ func _on_phase_changed(phase: MusicTypes.Phase) -> void:
 			performance.visible = true
 			performance_logic.visible = true
 		MusicTypes.Phase.GAME_OVER:
-			pass
+			performance.visible = false
+			performance_logic.visible = false

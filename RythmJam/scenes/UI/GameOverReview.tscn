@@ -1,0 +1,224 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/game_over_review.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://njsdkibv0slm" path="res://assets/Bg_Menu.png" id="2_bg"]
+[ext_resource type="Shader" uid="uid://bln83w46ta6ug" path="res://scripts/UI/twinkle2.gdshader" id="3_twinkle"]
+[ext_resource type="Texture2D" uid="uid://bfe4igs8ocdtc" path="res://assets/star.png" id="4_star"]
+[ext_resource type="Texture2D" uid="uid://d30ig2u8vvlt4" path="res://assets/kenney_toon-characters/Male person/Vector/Character.png" id="5_character"]
+[ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="6_font"]
+[ext_resource type="Texture2D" uid="uid://dgiwh3anernms" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_depth_flat.svg" id="7_button"]
+[ext_resource type="Texture2D" uid="uid://d11gulejpvcij" path="res://assets/kenney_ui-pack/Vector/Red/button_rectangle_flat.svg" id="8_button_pressed"]
+[ext_resource type="AudioStream" uid="uid://rpqaco43amih" path="res://assets/kenney_ui-pack/Sounds/drop_002.ogg" id="9_blip"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_twinkle"]
+shader = ExtResource("3_twinkle")
+shader_parameter/speed = 4.0
+shader_parameter/cell_px = 3.0
+shader_parameter/threshold = 0.12
+shader_parameter/glow_color = Color(1, 0.85, 0.35, 1)
+shader_parameter/glow_strength = 0.9
+shader_parameter/halo_strength = 1.4
+shader_parameter/halo_radius = 2.0
+shader_parameter/debug_mask = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_rim"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.96, 0.96, 0.96, 1)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_card"]
+content_margin_left = 24.0
+content_margin_top = 14.0
+content_margin_right = 24.0
+content_margin_bottom = 18.0
+bg_color = Color(0.95, 0.95, 0.95, 1)
+border_width_left = 7
+border_width_top = 7
+border_width_right = 7
+border_width_bottom = 7
+border_color = Color(0.93, 0.16, 0.28, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("6_font")
+font_size = 34
+font_color = Color(0.23, 0.23, 0.23, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_row"]
+font = ExtResource("6_font")
+font_size = 18
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_viewers"]
+font = ExtResource("6_font")
+font_size = 20
+font_color = Color(0.93, 0.16, 0.28, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_verdict"]
+font = ExtResource("6_font")
+font_size = 15
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_button"]
+font = ExtResource("6_font")
+font_size = 24
+
+[node name="GameOverReview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+star_texture = ExtResource("4_star")
+blip_sfx = ExtResource("9_blip")
+
+[node name="Background" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_twinkle")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+
+[node name="Character" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -430.0
+offset_top = -480.0
+offset_right = -10.0
+offset_bottom = 60.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("5_character")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 111.0
+offset_top = 161.0
+offset_right = 732.0
+offset_bottom = 525.0
+theme_override_styles/panel = SubResource("StyleBox_rim")
+
+[node name="Card" type="PanelContainer" parent="Panel"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_card")
+
+[node name="Content" type="VBoxContainer" parent="Panel/Card"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Panel/Card/Content"]
+layout_mode = 2
+text = "REVIEW"
+label_settings = SubResource("LabelSettings_title")
+
+[node name="Rows" type="GridContainer" parent="Panel/Card/Content"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_constants/h_separation = 30
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="CompositionLabel" type="Label" parent="Panel/Card/Content/Rows"]
+layout_mode = 2
+text = "COMPOSITION"
+label_settings = SubResource("LabelSettings_row")
+vertical_alignment = 1
+
+[node name="CompositionStars" type="HBoxContainer" parent="Panel/Card/Content/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PerformanceLabel" type="Label" parent="Panel/Card/Content/Rows"]
+layout_mode = 2
+text = "PERFORMANCE"
+label_settings = SubResource("LabelSettings_row")
+vertical_alignment = 1
+
+[node name="PerformanceStars" type="HBoxContainer" parent="Panel/Card/Content/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TotalLabel" type="Label" parent="Panel/Card/Content/Rows"]
+layout_mode = 2
+text = "TOTAL"
+label_settings = SubResource("LabelSettings_row")
+vertical_alignment = 1
+
+[node name="TotalStars" type="HBoxContainer" parent="Panel/Card/Content/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="AudienceLabel" type="Label" parent="Panel/Card/Content/Rows"]
+layout_mode = 2
+text = "AUDIENCE"
+label_settings = SubResource("LabelSettings_row")
+vertical_alignment = 1
+
+[node name="ViewersLabel" type="Label" parent="Panel/Card/Content/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0 VIEWERS"
+label_settings = SubResource("LabelSettings_viewers")
+vertical_alignment = 1
+
+[node name="Footer" type="HBoxContainer" parent="Panel/Card/Content"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="VerdictLabel" type="Label" parent="Panel/Card/Content/Footer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NOT BAD, YOU COOKED"
+label_settings = SubResource("LabelSettings_verdict")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="MenuButton" type="TextureButton" parent="Panel/Card/Content/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 48)
+layout_mode = 2
+texture_normal = ExtResource("7_button")
+texture_pressed = ExtResource("8_button_pressed")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="Panel/Card/Content/Footer/MenuButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "MENU"
+label_settings = SubResource("LabelSettings_button")
+horizontal_alignment = 1
+vertical_alignment = 1
