@@ -6,6 +6,11 @@
 [ext_resource type="Texture2D" uid="uid://cgpk10dy5r67f" path="res://assets/crowd.png" id="5_eqf1h"]
 [ext_resource type="Texture2D" uid="uid://dvw4u8v2e8e6s" path="res://assets/logo.png" id="5_vtr6l"]
 [ext_resource type="Texture2D" uid="uid://dtrtgev0rc4cd" path="res://assets/Track2.png" id="6_eqf1h"]
+[ext_resource type="Script" uid="uid://deu4l86clsv6c" path="res://scripts/UI/KeyboardInput.gd" id="7_f4pkf"]
+[ext_resource type="Texture2D" uid="uid://cyccoohg2dg1d" path="res://assets/Keyboard/keyboard_d.svg" id="7_nbnph"]
+[ext_resource type="Texture2D" uid="uid://b73x050i2kver" path="res://assets/Keyboard/keyboard_f.svg" id="8_f4pkf"]
+[ext_resource type="Texture2D" uid="uid://dgs22yv2iut41" path="res://assets/Keyboard/keyboard_j.svg" id="9_76k70"]
+[ext_resource type="Texture2D" uid="uid://dbaggx5clh1nj" path="res://assets/Keyboard/keyboard_k.svg" id="10_cu3ah"]
 
 [node name="Performance" type="Control" unique_id=1131675564]
 layout_mode = 3
@@ -118,3 +123,49 @@ offset_bottom = 249.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.36862746)
+
+[node name="MarginContainer2" type="MarginContainer" parent="." unique_id=354456534]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -189.0
+offset_top = -88.0
+offset_right = 189.0
+offset_bottom = -13.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("7_f4pkf")
+beam_width = 5.0
+lane_colors = Array[Color]([Color(1, 0.8235294, 0.24705882, 1), Color(1, 0.1764706, 0.23921569, 1), Color(2.6471912e-06, 0.7084193, 0.26679292, 1), Color(0.24705882, 0.8784314, 1, 1)])
+beam_height = 400.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2" unique_id=1437597011]
+layout_mode = 2
+theme_override_constants/separation = 26
+
+[node name="D_Key" type="TextureRect" parent="MarginContainer2/HBoxContainer" unique_id=1025048915]
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+texture = ExtResource("7_nbnph")
+expand_mode = 1
+
+[node name="F_Key" type="TextureRect" parent="MarginContainer2/HBoxContainer" unique_id=1376246617]
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+texture = ExtResource("8_f4pkf")
+expand_mode = 1
+
+[node name="J_Key" type="TextureRect" parent="MarginContainer2/HBoxContainer" unique_id=208874346]
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+texture = ExtResource("9_76k70")
+expand_mode = 1
+
+[node name="K_Key" type="TextureRect" parent="MarginContainer2/HBoxContainer" unique_id=1121069196]
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+texture = ExtResource("10_cu3ah")
+expand_mode = 1
