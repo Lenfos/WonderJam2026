@@ -121,6 +121,7 @@ func _set_phase(phase: MusicTypes.Phase) -> void:
 
 
 func _is_request_valid(expected: MusicTypes.Phase, request: String) -> bool:
+	print(expected)
 	if _phase == expected:
 		return true
 	_warn_ignored(request)

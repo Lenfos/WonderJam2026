@@ -35,6 +35,7 @@ func start(news: NewsData, p_duration_sec: float = -1.0) -> void:
 ## Ends the phase now, as if time ran out. No-op if not running.
 func finish_early() -> void:
 	if _running:
+		print("finish early")
 		_finish()
 
 
@@ -62,6 +63,7 @@ func _update_countdown() -> void:
 # The backing track keeps playing: the next phase decides what to do with the clock.
 func _finish() -> void:
 	_running = false
+	print("Finish")
 	sequencer.stop()
 	MusicBus.composition_time_changed.emit(0)
 	MusicBus.composition_finished.emit(_composition.duplicate_composition())

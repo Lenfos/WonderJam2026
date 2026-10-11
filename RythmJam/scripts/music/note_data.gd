@@ -23,7 +23,7 @@ static func build_chart(composition: Composition, beat_length: float, first_beat
 	for loop in loops:
 		for step in MusicTypes.STEP_COUNT:
 			var beat := first_beat + loop * MusicTypes.STEP_COUNT + step
-			for lane in MusicTypes.LANE_COUNT:
-				if composition.is_active(lane, step):
-					chart.append(NoteData.new(chart.size(), lane, beat * beat_length))
+			for ilane in MusicTypes.LANE_COUNT:
+				if composition.is_active(ilane, step):
+					chart.append(NoteData.new(chart.size(), ilane, beat * beat_length))
 	return chart

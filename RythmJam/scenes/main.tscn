@@ -66,6 +66,8 @@ transition_text = "COMPOSE"
 transition_font = ExtResource("9_85g3d")
 
 [node name="Performance" parent="UIRoot/CanvasLayer/GameUi" unique_id=1131675564 instance=ExtResource("10_choun")]
+z_index = -1
+z_as_relative = false
 layout_mode = 1
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2034373341]

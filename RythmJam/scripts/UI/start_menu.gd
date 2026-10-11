@@ -150,7 +150,6 @@ func _play_intro() -> void:
 	await get_tree().create_timer(delay + 0.4).timeout
 	for b in _menu_buttons:
 		b.set_meta("ready", true)
-	play_button.grab_focus()
 	_animate_logo(logo_target.y)
 
 
@@ -223,7 +222,7 @@ func _on_play() -> void:
 		b.focus_mode = Control.FOCUS_NONE
 	_sfx(_click_player)
 	
-	MusicBus.phase_changed.emit(MusicTypes.Phase.NEWS_INTRO)
+	MusicBus.start_game_requested.emit()
 
 	# Distance = écart entre le menu et News (News doit être pile à droite du menu)
 	var dist := slide_distance if slide_distance > 0.0 else _news_home.x - _menu_home.x
@@ -410,8 +409,7 @@ func _make_band(color: Color, band_size: Vector2, angle: float) -> ColorRect:
 	return r
 
 func _on_covered() -> void:
-		MusicBus.phase_changed.emit(MusicTypes.Phase.COMPOSITION)
-
+	MusicBus.continue_requested.emit()
 
 func _shake(node: Control, strength := 6.0, duration := 0.2) -> void:
 	var origin := node.position
