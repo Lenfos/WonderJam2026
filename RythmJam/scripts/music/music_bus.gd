@@ -17,6 +17,10 @@ signal start_game_requested
 ## UI -> MUSIC. NEWS_INTRO, COMPOSITION_REVIEW: the player clicked "Continuer".
 ## Answer: phase_changed to the next phase (see the phase diagram).
 signal continue_requested
+## UI -> MUSIC. COMPOSITION, before the composition runs: the player is ready (start key pressed once
+## the screen transition is over). Answer: composition_started, then the music and the countdown run.
+## Sent again while composing, it restarts the composition: empty grid, music and countdown from the top.
+signal composition_start_requested
 ## UI -> MUSIC. COMPOSITION: the player clicked "J'ai fini". Answer: composition_finished, then
 ## phase_changed(COMPOSITION_REVIEW) + composition_evaluated.
 signal finish_composition_requested
@@ -43,7 +47,8 @@ signal game_finished(audimat: int)
 
 # --- MUSIC -> UI: COMPOSITION phase. ---
 
-## COMPOSITION phase starts: the grid is empty, the backing track plays, the countdown runs.
+## COMPOSITION phase, answer to composition_start_requested: the grid is empty, the backing track
+## plays, the countdown runs.
 ## Listen: UI, to show the headline and reset the grid.
 signal composition_started(news: NewsData, duration_sec: float)
 

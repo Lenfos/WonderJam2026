@@ -4,6 +4,7 @@ extends Control
 @onready var start_menu: Control = $StartMenu
 
 @onready var performance: Control = $Performance
+@onready var composition: Control = $Composition
 @onready var performance_logic: Node2D = $"../../../PerformanceLogic"
 @onready var performance_phase: PerformancePhase = $"../../../MusicSystem/PerformancePhase"
 
@@ -17,19 +18,21 @@ func _ready() -> void:
 	_on_phase_changed(MusicBus.get_current_phase())   # pas de signal au lancement
 	performance.visible = false
 	performance_logic.visible = false
+	composition.visible = false
+	placeholder_ui.visible = false
 
 func _on_phase_changed(phase: MusicTypes.Phase) -> void:
 	print(phase)
 	match phase:
 		MusicTypes.Phase.COMPOSITION:
 			start_menu.visible = false
-			composition_phase.start(news)
+			composition.visible = true
 		MusicTypes.Phase.COMPOSITION_REVIEW:
 			pass
 		MusicTypes.Phase.PERFORMANCE:
 			print("Performance start")
+			composition.visible = false
 			performance.visible = false
 			performance_logic.visible = true
-			performance_phase.start(MusicBus.get_current_news(), composition_phase._composition, 1)
 		MusicTypes.Phase.GAME_OVER:
 			pass

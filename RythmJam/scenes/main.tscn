@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b6wnp5c8y2dng"]
+[gd_scene format=3 uid="uid://ca2h281tc7hp2"]
 
 [ext_resource type="Script" uid="uid://mn0gaj5vsata" path="res://scripts/music/music_clock.gd" id="1"]
 [ext_resource type="Script" uid="uid://dyy0806lycxp5" path="res://scripts/music/sequencer_player.gd" id="2"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bx2h38y26cbw4" path="res://scenes/UI/StartMenu.tscn" id="8_tipki"]
 [ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="9_85g3d"]
 [ext_resource type="PackedScene" uid="uid://dc5bo8uvdl1t4" path="res://scenes/UI/PerformanceUI.tscn" id="10_choun"]
+[ext_resource type="PackedScene" uid="uid://cgf5fgttxh3up" path="res://scenes/UI/Composition.tscn" id="11_eb6dy"]
 [ext_resource type="PackedScene" uid="uid://go7n540iuvar" path="res://scenes/PerformanceLogic.tscn" id="11_ya4ey"]
 
 [node name="Main" type="Node" unique_id=2084702550]
@@ -68,6 +69,10 @@ transition_font = ExtResource("9_85g3d")
 [node name="Performance" parent="UIRoot/CanvasLayer/GameUi" unique_id=1131675564 instance=ExtResource("10_choun")]
 z_index = -1
 z_as_relative = false
+layout_mode = 1
+
+[node name="Composition" parent="UIRoot/CanvasLayer/GameUi" unique_id=78823517 instance=ExtResource("11_eb6dy")]
+z_index = -2
 layout_mode = 1
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=2034373341]

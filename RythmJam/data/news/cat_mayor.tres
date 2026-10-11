@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="NewsData" format=3]
+[gd_resource type="Resource" script_class="NewsData" format=3 uid="uid://d0unqg7iuuian"]
 
-[ext_resource type="AudioStream" path="res://audio/backings/background_track_loop.wav" id="1_jmt2p"]
-[ext_resource type="Script" path="res://scripts/music/news_data.gd" id="2_v8goe"]
+[ext_resource type="AudioStream" uid="uid://rq1dw52tiifv" path="res://audio/backings/background_track_loop.wav" id="1_jmt2p"]
+[ext_resource type="Script" uid="uid://ihvwr73b28ot" path="res://scripts/music/news_data.gd" id="2_v8goe"]
 
 [resource]
 script = ExtResource("2_v8goe")

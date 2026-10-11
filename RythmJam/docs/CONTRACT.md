@@ -109,22 +109,25 @@ TITLE
 - **À écouter** :
   - `game_started(news: NewsData)`, juste après `phase_changed(NEWS_INTRO)`. `news.headline` = le titre.
 - **À émettre** : `continue_requested()` quand le joueur est prêt (bouton « Continuer »). Pas de minuteur : la phase attend ce clic, tu peux jouer ton anim d'intro avant d'afficher le bouton.
-- **Sortie** : → `COMPOSITION`, le chrono démarre aussitôt.
+- **Sortie** : → `COMPOSITION`. Le chrono ne démarre pas encore : il attend `composition_start_requested`.
 - **Attention** : après « Rejouer », l'audimat repasse à 0 **sans** `audimat_changed`. Remets ton compteur à zéro dans `game_started` (ou lis `MusicBus.get_audimat()`).
 
 ### `COMPOSITION` : le joueur compose
 
 - **À l'écran** : la grille 4 × 16. Une ligne par piste, dans l'ordre `KICK`, `SNARE`, `BRASS`, `BELLS` ; une colonne par pas, de 0 à 15, à grouper par 4 (une mesure). La colonne en cours de lecture surlignée, le titre de la news, le chrono, un bouton « J'ai fini ».
-- **Musique** : la backing track tourne en boucle et la grille est jouée en direct : une case allumée s'entend au prochain passage de la tête de lecture. Allumer une case joue aussi son son tout de suite.
+- **Démarrage** : en entrant dans la phase, rien ne joue et la grille est figée. Quand ton écran est prêt (transition finie), affiche « Appuie sur ESPACE » et émets `composition_start_requested()` à l'appui (action `start_composition`, Espace par défaut). La musique et le chrono partent à ce moment-là, avec `composition_started`.
+- **Musique** : une fois démarrée, la backing track tourne en boucle et la grille est jouée en direct : une case allumée s'entend au prochain passage de la tête de lecture. Allumer une case joue aussi son son tout de suite.
 - **À écouter** :
-  - `composition_started(news: NewsData, duration_sec: float)` : début de phase, la grille est vide, vide la tienne. `duration_sec` = durée totale du chrono (45 s pour l'instant).
+  - `composition_started(news: NewsData, duration_sec: float)` : la composition démarre (réponse à `composition_start_requested`), la grille est vide, vide la tienne. `duration_sec` = durée totale du chrono (45 s pour l'instant).
   - `composition_time_changed(seconds_left: int)` : secondes restantes, arrondi au-dessus. Une fois au départ, puis une fois par seconde (pas à chaque frame), et `0` à la fin.
   - `composition_changed(lane: int, step: int, active: bool)` : une case a changé, `active` = son nouvel état. Redessine-la.
   - `step_changed(step: int)` : la tête de lecture arrive sur la colonne `step`. Surligne-la et éteins la colonne que tu avais surlignée (pas forcément `step - 1` : après un gros ralentissement, un pas peut être sauté).
   - `composition_finished(composition: Composition)` (optionnel) : la grille finale. Copie figée : lis-la, ne la modifie jamais.
 - **À émettre** :
+  - `composition_start_requested()` quand le joueur lance la composition (voir « Démarrage »). Réémis pendant la composition, il la recommence : grille vide, musique et chrono repartent du début (nouveau `composition_started`).
   - `cell_toggle_requested(lane: int, step: int)` au clic sur une case. **Ne change pas la case toi-même** : attends `composition_changed`. (Ignoré sans warning hors de cette phase.)
   - `finish_composition_requested()` au clic sur « J'ai fini ».
+  - Pour vider la grille (touche `clear_composition`, C par défaut) : un `cell_toggle_requested` par case allumée, d'après ta copie de la grille (voir plus bas).
 - **Sortie** : chrono à 0 ou « J'ai fini » → `COMPOSITION_REVIEW`. Tu reçois dans la même frame `composition_time_changed(0)`, `phase_changed(COMPOSITION_REVIEW)`, `composition_evaluated` et `composition_finished` : ne compte pas sur l'ordre entre `composition_finished` et `phase_changed`.
 
 Pour garder ta propre copie de la grille (c'est ce que fait `sequencer_grid.gd`) : une `Composition.new()` à toi, `clear()` dans `composition_started`, `set_cell(lane, step, active)` dans `composition_changed`. Elle ne sert qu'à l'affichage : ne l'envoie jamais côté musique.
