@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://go7n540iuvar"]
 
 [ext_resource type="Script" uid="uid://nehmq5l1cb6j" path="res://scripts/buttons_manager.gd" id="1_uqtct"]
+[ext_resource type="FontFile" uid="uid://bnv8ygawct284" path="res://assets/kenney_ui-pack/Font/Kenney Future.ttf" id="2_tt601"]
 
 [sub_resource type="Curve2D" id="Curve2D_uvfqa"]
 _data = {
@@ -26,14 +27,40 @@ _data = {
 }
 point_count = 2
 
-[node name="PerformanceLogic" type="Node2D" unique_id=941835878 node_paths=PackedStringArray("lanes", "playfield")]
+[node name="PerformanceLogic" type="Node2D" unique_id=941835878 node_paths=PackedStringArray("lanes", "hit_markers", "playfield")]
 script = ExtResource("1_uqtct")
 lanes = [NodePath("Playfield/Path1"), NodePath("Playfield/Path2"), NodePath("Playfield/Path3"), NodePath("Playfield/Path4")]
+hit_markers = [NodePath("Line2D"), NodePath("Line2D2"), NodePath("Line2D3"), NodePath("Line2D4")]
 playfield = NodePath("Playfield")
+labelFont = ExtResource("2_tt601")
 
 [node name="Line2D" type="Line2D" parent="." unique_id=1269984767]
-position = Vector2(370, 527)
+visible = false
+position = Vector2(403.00003, 499)
+scale = Vector2(0.18588236, 1)
 points = PackedVector2Array(0, 0, 405, 0)
+default_color = Color(0.7245336, 0.7757775, 0.19900176, 1)
+
+[node name="Line2D2" type="Line2D" parent="." unique_id=66844030]
+visible = false
+position = Vector2(490.8353, 499)
+scale = Vector2(0.18352938, 1)
+points = PackedVector2Array(0, 0, 405, 0)
+default_color = Color(1, 0.46437204, 0.45565522, 1)
+
+[node name="Line2D3" type="Line2D" parent="." unique_id=1425257693]
+visible = false
+position = Vector2(581.1412, 499)
+scale = Vector2(0.21411762, 1)
+points = PackedVector2Array(0, 0, 405, 0)
+default_color = Color(0, 0.7338289, 0.28094253, 1)
+
+[node name="Line2D4" type="Line2D" parent="." unique_id=2119387091]
+visible = false
+position = Vector2(680.5765, 499)
+scale = Vector2(0.15764691, 1)
+points = PackedVector2Array(0, 0, 405, 0)
+default_color = Color(0, 0.6600748, 0.79539657, 1)
 
 [node name="Playfield" type="Node2D" parent="." unique_id=1812428836]
 

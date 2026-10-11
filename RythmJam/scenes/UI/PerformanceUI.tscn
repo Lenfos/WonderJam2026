@@ -11,8 +11,12 @@
 [ext_resource type="Texture2D" uid="uid://b73x050i2kver" path="res://assets/Keyboard/keyboard_f.svg" id="8_f4pkf"]
 [ext_resource type="Texture2D" uid="uid://dgs22yv2iut41" path="res://assets/Keyboard/keyboard_j.svg" id="9_76k70"]
 [ext_resource type="Texture2D" uid="uid://dbaggx5clh1nj" path="res://assets/Keyboard/keyboard_k.svg" id="10_cu3ah"]
+[ext_resource type="Texture2D" uid="uid://cnp72gnvlvh6w" path="res://assets/kenney_ui-pack/Vector/Red/button_round_border.svg" id="12_76k70"]
+[ext_resource type="Texture2D" uid="uid://blfhub0psmys4" path="res://assets/kenney_ui-pack/Vector/Yellow/button_round_border.svg" id="12_bo0lo"]
+[ext_resource type="Texture2D" uid="uid://1qmkx8lid4xi" path="res://assets/kenney_ui-pack/Vector/green/button_round_border.svg" id="14_kyjop"]
+[ext_resource type="Texture2D" uid="uid://cncdtly8r4850" path="res://assets/kenney_ui-pack/Vector/Blue/button_round_border.svg" id="15_0uom1"]
 
-[node name="Performance" type="Control" unique_id=1131675564]
+[node name="Performance" type="Control" unique_id=1131675564 node_paths=PackedStringArray("receptor_rects")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,6 +24,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_eqf1h")
+receptor_rects = [NodePath("HitMarkersYellow"), NodePath("HitMarkersRed"), NodePath("TextureRectGreen"), NodePath("TextureRectBlue")]
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=223279787]
 layout_mode = 1
@@ -169,3 +174,67 @@ custom_minimum_size = Vector2(75, 75)
 layout_mode = 2
 texture = ExtResource("10_cu3ah")
 expand_mode = 1
+
+[node name="HitMarkersYellow" type="TextureRect" parent="." unique_id=1239184862]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -162.0
+offset_top = -184.0
+offset_right = -92.0
+offset_bottom = -114.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(35, 35)
+texture = ExtResource("12_bo0lo")
+
+[node name="HitMarkersRed" type="TextureRect" parent="." unique_id=885887005]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -74.0
+offset_top = -184.0
+offset_right = -4.0
+offset_bottom = -114.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(35, 35)
+texture = ExtResource("12_76k70")
+
+[node name="TextureRectGreen" type="TextureRect" parent="." unique_id=1017469842]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -184.0
+offset_right = 78.0
+offset_bottom = -114.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(35, 35)
+texture = ExtResource("14_kyjop")
+
+[node name="TextureRectBlue" type="TextureRect" parent="." unique_id=1719303228]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 93.0
+offset_top = -184.0
+offset_right = 163.0
+offset_bottom = -114.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(35, 35)
+texture = ExtResource("15_0uom1")

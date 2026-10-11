@@ -13,14 +13,20 @@ const NOTE_SCENE_2 := preload("res://scenes/note_2.tscn")
 const NOTE_SCENE_3 := preload("res://scenes/note_3.tscn")
 const NOTE_SCENE_4 := preload("res://scenes/note_4.tscn")
 
+signal hit_position_ready(position : Array[Vector2])
 
 @export var lanes: Array[Path2D] = []             # 4 Path2D : KICK, SNARE, BRASS, BELLS
 @export var hit_markers: Array[Node2D] = []       # 4 positions de ligne de frappe (popups)
 @export var receptors: Array[CanvasItem] = []     # optionnel : 4 sprites qui s'allument à l'appui
 @export var playfield: Node2D                     # optionnel : nœud à secouer
 @export var travel_time := 2.0
+@export var labelFont : Font
 
 @onready var performance: Control = $"../../CanvasLayer/GameUi/Performance"
+@onready var marker: Line2D = $Line2D
+var ratio_at_hit := 0.7
+var ratios: Array[float] = []
+
 
 # Jugement -> [texte, couleur]
 const JUDGMENT_STYLE := {
@@ -45,12 +51,20 @@ func _ready() -> void:
 	MusicBus.phase_changed.connect(_on_phase_changed)
 	MusicBus.chaos_level_changed.connect(func(level: float) -> void: _chaos = level)
 
+	for i in lanes.size():
+		var curve := lanes[i].curve
+		var local_pos := lanes[i].to_local(hit_markers[i].global_position)
+		ratios.append(curve.get_closest_offset(local_pos) / curve.get_baked_length())
+	var positions: Array[Vector2] = []
+	for marker in hit_markers:
+		positions.append(marker.get_global_transform_with_canvas().origin)
+	hit_position_ready.emit(positions)
+
 
 func _process(_delta: float) -> void:
 	for lane in receptors.size():
 		var pressed := Input.is_action_pressed(MusicTypes.lane_action(lane))
 		receptors[lane].modulate = Color(2, 2, 2) if pressed else Color.WHITE
-
 
 
 func _on_performance_started(chart: Array, _lead_time_sec: float) -> void:
@@ -65,6 +79,7 @@ func _on_performance_started(chart: Array, _lead_time_sec: float) -> void:
 
 		note.hit_time = data.time_sec
 		note.travel_time = travel_time
+		note.ratio_at_hit = ratios[data.lane]
 		lanes[data.lane].add_child(note)
 		_notes[data.index] = note
 
@@ -114,6 +129,7 @@ func _show_judgment(judgment: MusicTypes.Judgment, lane: int) -> void:
 	label.add_theme_font_size_override("font_size", 32)
 	label.add_theme_color_override("font_outline_color", Color.BLACK)
 	label.add_theme_constant_override("outline_size", 6)
+	label.add_theme_font_override("font", labelFont)
 	label.z_index = 300
 	add_child(label)
 

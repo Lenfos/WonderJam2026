@@ -67,16 +67,17 @@ layout_mode = 1
 transition_text = "COMPOSE"
 transition_font = ExtResource("9_85g3d")
 
-[node name="Performance" parent="UIRoot/CanvasLayer/GameUi" unique_id=1131675564 instance=ExtResource("10_choun")]
+[node name="Performance" parent="UIRoot/CanvasLayer/GameUi" unique_id=1131675564 node_paths=PackedStringArray("spawner") instance=ExtResource("10_choun")]
 z_index = -1
 z_as_relative = false
 layout_mode = 1
+spawner = NodePath("../../../CanvasLayerNote/PerformanceLogic")
 
 [node name="Composition" parent="UIRoot/CanvasLayer/GameUi" unique_id=78823517 instance=ExtResource("11_eb6dy")]
 z_index = -2
 layout_mode = 1
 
-[node name="GameOverReview" parent="UIRoot/CanvasLayer/GameUi" instance=ExtResource("12_review")]
+[node name="GameOverReview" parent="UIRoot/CanvasLayer/GameUi" unique_id=1894588789 instance=ExtResource("12_review")]
 layout_mode = 1
 
 [node name="CanvasLayerNote" type="CanvasLayer" parent="UIRoot" unique_id=201588237]
